@@ -39,6 +39,7 @@
     width: 120px;
     height: 40px;
     background-color: rgb(50, 126, 225);
+    margin-bottom: 6px;
 }
 
 .generateBtn:hover{

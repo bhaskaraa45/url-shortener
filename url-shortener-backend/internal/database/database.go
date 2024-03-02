@@ -75,7 +75,7 @@ func (s *service) GetOGUrl(shorturl string) string {
 	if err != nil {
 		log.Printf("failed to fetch og url of %v", shorturl)
 		log.Printf("error: %v", err)
-		return "bhaskaraa45.me"
+		return "https://bhaskaraa45.me"
 	}
 
 	s.UpdateClick(data.Clicked+1, shorturl)
