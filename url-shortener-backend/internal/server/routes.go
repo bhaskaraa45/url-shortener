@@ -12,15 +12,32 @@ import (
 )
 
 func (s *Server) RegisterRoutes() http.Handler {
-	r := gin.Default()
-	r.GET("/", s.HelloWorldHandler)
-	r.GET("/health", s.healthHandler)
-	r.POST("/add", s.handlePostData)
-	r.GET("/:shorturl", s.handleShortUrlClick)
-	r.GET("/getAll", s.handleGetAll)
+    r := gin.Default()
 
-	return r
+    // Add CORS middleware
+    r.Use(func(c *gin.Context) {
+        c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+        c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+        c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+        // Handle preflight requests
+        if c.Request.Method == "OPTIONS" {
+            c.AbortWithStatus(http.StatusOK)
+            return
+        }
+		
+        c.Next()
+    })
+
+    r.GET("/", s.HelloWorldHandler)
+    r.GET("/health", s.healthHandler)
+    r.POST("/add", s.handlePostData)
+    r.GET("/:shorturl", s.handleShortUrlClick)
+    r.GET("/getAll", s.handleGetAll)
+
+    return r
 }
+
 
 func (s *Server) HelloWorldHandler(c *gin.Context) {
 	resp := make(map[string]string)
