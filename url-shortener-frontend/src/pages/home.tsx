@@ -6,7 +6,7 @@ import '../styles/styles.css'
 
 function HomePage() {
     const [longUrl, setLongUrl] = useState("");
-    const [shortenedUrls, setShortenedUrls] = useState([]);
+    const [shortenedUrls, setShortenedUrls] = useState<DataModel[]>([]);
 
     useEffect(() => {
         ApiServices.getAllUrls()
@@ -14,7 +14,7 @@ function HomePage() {
                 setShortenedUrls(response);
             })
             .catch(error => {
-                console.error('Error fetching shortened URLs:', error);
+                // console.error('Error fetching shortened URLs:', error);
             });
     }, []);
 
@@ -22,11 +22,18 @@ function HomePage() {
     const handleGenerateClick = () => {
         console.log(longUrl);
         ApiServices.generateShortUrl(longUrl)
-        setLongUrl("")
+            .then(newShortUrl => {
+                // Append the new short URL to the existing list
+                setShortenedUrls(prevShortenedUrls => [...prevShortenedUrls, newShortUrl]);
+            })
+            .catch(error => {
+                // Handle error
+            });
+        setLongUrl("");
     };
+    
+    
     console.log(shortenedUrls)
-
-    const dummyData = new DataModel("https://bhaskar-gamma.vercel.app/", "https://shrink.bhaskaraa45.me/portfolio", 0);
 
     return (
         <div className="main rounded-lg border-rose-500 shadow-lg">
@@ -57,7 +64,7 @@ function HomePage() {
                 Your shortened URLs
             </div>
 
-            <TableComponent dataList={shortenedUrls} />
+            <TableComponent dataList={shortenedUrls!=null  ? shortenedUrls: []} />
 
         </div>
     );

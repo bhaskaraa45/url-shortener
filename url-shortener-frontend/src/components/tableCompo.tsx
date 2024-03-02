@@ -31,7 +31,7 @@ function TableComponent({ dataList }: { dataList: DataModel[] }) {
                         dataList.map((data, index) => (
                             <tr key={index} className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
                                 <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    <a href={data.shorturl} target="_blank" className="font-medium  hover:underline">{data.shorturl}</a>
+                                    <a href={data.shorturl} target="_blank" className="font-medium  hover:underline"> {process.env.REACT_APP_FRONTEND_DOMAIN}/{data.shorturl}</a>
                                 </td>
                                 <td className="px-6 py-4">
                                     <a href={data.url} target="_blank" className="font-medium hover:underline">{data.url}</a>

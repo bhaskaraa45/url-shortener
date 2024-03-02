@@ -1,10 +1,11 @@
 class ApiServices {
 
-    static endpoint: string = process.env.REACT_APP_BACKEND_DOMAIN ;
+    static endpoint: string = process.env.REACT_APP_BACKEND_DOMAIN  ;
     static async generateShortUrl(url: string) {
         // const endpoint: string = "localhost:8080";
+        console.log(ApiServices.endpoint)
         try {
-            const response = await fetch(`http://localhost:8080/add`, {
+            const response = await fetch(`http://${ApiServices.endpoint}/add`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -30,7 +31,7 @@ class ApiServices {
 
     static async getAllUrls(){
         try {
-            const response = await fetch(`http://localhost:8080/getAll`, {
+            const response = await fetch(`http://${ApiServices.endpoint}/getAll`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
