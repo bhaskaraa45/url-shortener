@@ -34,14 +34,21 @@
 }
 
 .generateBtn{
+    position: relative;
     margin-top: 24px;
     align-self: center;
     width: 120px;
     height: 40px;
+    min-height: 40px;
     background-color: rgb(50, 126, 225);
     margin-bottom: 6px;
 }
 
 .generateBtn:hover{
     background-color: rgb(1, 84, 193);
+}
+
+.tableData{
+    margin-top: 4px;
+    margin-bottom: 6px;    
 }
