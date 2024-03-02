@@ -17,6 +17,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.GET("/health", s.healthHandler)
 	r.POST("/add", s.handlePostData)
 	r.GET("/:shorturl", s.handleShortUrlClick)
+	r.GET("/getAll", s.handleGetAll)
 
 	return r
 }
@@ -74,4 +75,13 @@ func (s *Server) handleShortUrlClick(c *gin.Context) {
 	resp["url"] = og
 	resp["shorturl"] = shorturl
 	c.JSON(http.StatusOK, resp)
+}
+
+func (s *Server) handleGetAll(c *gin.Context) {
+	res, err := s.db.GetAll()
+	if err !=nil {
+		resp := internal.CustomResponse("failed to get data!", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, resp)
+	}
+	c.JSON(http.StatusOK, res)
 }

@@ -17,6 +17,7 @@ type Service interface {
 	Health() map[string]string
 	AddData(url string, shorturl string, clicked int) bool
 	GetOGUrl(shorturl string) string
+	GetAll() ([]model.DataModel, error)
 }
 
 type service struct {
@@ -92,4 +93,35 @@ func (s *service) UpdateClick(click int, shorturl string) bool {
 		return false
 	}
 	return true
+}
+
+func (s *service) GetAll() ([]model.DataModel, error) {
+	que := "SELECT * FROM urlshrink ORDER BY id ASC"
+	rows, err := s.db.Query(que)
+
+	if err != nil {
+		log.Printf("Error while getting all data: %v", err)
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var alldata []model.DataModel
+	for rows.Next() {
+		var data model.DataModel
+		var id int
+		err := rows.Scan(&id, &data.Url, &data.ShortUrl, &data.Clicked)
+		if err != nil {
+			log.Printf("error scanning data row: %v", err)
+			return nil, err
+		}
+		alldata = append(alldata, data)
+	}
+
+	if err := rows.Err(); err != nil {
+		log.Printf("error iterating over data rows: %v", err)
+		return nil, err
+	}
+
+	return alldata, nil
 }
