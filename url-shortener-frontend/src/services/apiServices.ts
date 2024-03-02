@@ -43,6 +43,22 @@ class ApiServices {
             console.error(error);
         }
     }
+
+    static async getOgUrl(shorturl: string){
+        try {
+            console.log(ApiServices.endpoint)
+            const response = await fetch(`http://${ApiServices.endpoint}/${shorturl}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            });
+            const data = await response.json();
+            return data["url"];
+        } catch (error) {
+            console.error(error);
+        }
+    }
 }
 
 export default ApiServices;

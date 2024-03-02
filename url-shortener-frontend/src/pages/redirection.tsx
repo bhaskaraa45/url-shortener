@@ -1,27 +1,45 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
+import ApiServices from "../services/apiServices.ts";
 
 function RedirectionPage() {
     const location = useLocation();
+    const isFirstTimeRef = useRef(true);
+    const [redirectUrl, setRedirectUrl] = useState<string>("");
 
+    const defaultUrl = "https://bhaskaraa45.me"
 
     useEffect(() => {
-        var pathname = location.pathname;
-        const temp = pathname.split("/");
-        if (temp.length === 2) {
-            pathname = temp[1];
-        }else{
-            window.location.href = "https://bhaskaraa45.me"
+        if (isFirstTimeRef.current) {
+            const fetchData = async () => {
+                const pathname = location.pathname;
+                const temp = pathname.split("/");
+                if (temp.length === 2) {
+                    const shortUrl = temp[1];
+                    try {
+                        const response = await ApiServices.getOgUrl(shortUrl);
+                        setRedirectUrl(response);
+                    } catch (error) {
+                        // Handle error
+                        console.error(error);
+                    }
+                } else {
+                    setRedirectUrl(defaultUrl);
+                }
+            };
+
+            fetchData();
+            isFirstTimeRef.current = false;
         }
-        
+    }, []); // Empty dependency array ensures that the effect runs only once
 
-    }, [location.pathname]); // Adding location.pathname to the dependency array
-
+    if (redirectUrl.length > 5) {
+        window.location.href = redirectUrl;
+    }
 
     return (
         <div>
-            <h2>Redirection Page</h2>
-            <p>Path: {location.pathname}</p>
+            {/* You can render any additional content here */}
         </div>
     );
 }
