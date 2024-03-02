@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"url-shortener-backend/internal"
 	"url-shortener-backend/internal/model"
+	"url-shortener-backend/internal/services"
 
 	"github.com/gin-gonic/gin"
 )
@@ -43,10 +44,21 @@ func (s *Server) handlePostData(c *gin.Context) {
 		return
 	}
 
-	res := s.db.AddData(data.Url, data.ShortUrl, 0)
+	shortUrl, err := services.GenerateShortId()
+	if err != nil {
+		resp := internal.CustomResponse(err.Error(), http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, resp)
+		return
+	}
+
+	res := s.db.AddData(data.Url, shortUrl, 0)
 
 	if res {
-		resp := internal.CustomResponse("data successfully added!", http.StatusOK)
+		// resp := internal.CustomResponse("data successfully added!", http.StatusOK)
+		resp := make(map[string]string)
+		resp["shorturl"] = shortUrl
+		resp["url"] = data.Url
+		resp["clicked"] = "0"
 		c.JSON(http.StatusOK, resp)
 	} else {
 		resp := internal.CustomResponse("failed to add data!", http.StatusBadRequest)

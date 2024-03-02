@@ -66,32 +66,30 @@ func (s *service) AddData(url string, shorturl string, clicked int) bool {
 }
 
 func (s *service) GetOGUrl(shorturl string) string {
-	que := "SELECT url FROM urlshrink WHERE shorturl = $1"
+	que := "SELECT * FROM urlshrink WHERE shorturl = $1"
 	var data model.DataModel
-	rows, err := s.db.Query(que, shorturl)
-	
+	var id int
+	err := s.db.QueryRow(que, shorturl).Scan(&id, &data.Url, &data.ShortUrl, &data.Clicked)
+
 	if err != nil {
 		log.Printf("failed to fetch og url of %v", shorturl)
 		log.Printf("error: %v", err)
 		return "bhaskaraa45.me"
 	}
 
-	defer rows.Close()
+	s.UpdateClick(data.Clicked+1, shorturl)
 
-	for rows.Next() {
-		err := rows.Scan(&data.ShortUrl)
-		if err != nil {
-			log.Printf("failed to scan og url of %v", shorturl)
-			log.Printf("error: %v", err)
-			return "bhaskaraa45.me"
-		}
+	return data.Url
+}
+
+func (s *service) UpdateClick(click int, shorturl string) bool {
+	que := "UPDATE urlshrink SET clicked = $1 WHERE shorturl = $2"
+	_, err := s.db.Exec(que, click, shorturl)
+
+	if err != nil {
+		log.Printf("Failed to upadte click for shorturl: %v", shorturl)
+		log.Printf("Error: %v", err)
+		return false
 	}
-	
-	if err := rows.Err(); err != nil {
-        log.Printf("failed to iterate over rows for og url of %v", shorturl)
-        log.Printf("error: %v", err)
-        return "bhaskaraa45.me"
-    }
-
-	return data.ShortUrl
+	return true
 }
