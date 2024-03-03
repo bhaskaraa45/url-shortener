@@ -3,20 +3,52 @@ import TableComponent from "../components/tableCompo.tsx";
 import DataModel from "../models/datamodel.ts"
 import ApiServices from "../services/apiServices.ts";
 import '../styles/styles.css'
+import { initializeApp } from "firebase/app";
+import { getAuth, User } from "firebase/auth";
+import { redirect } from "react-router-dom"; // Import Redirect from react-router-dom
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBnCNk7cot7SKQH4KZLi0o3BQtl6JZir6U",
+    authDomain: "url-shortener-aa45.firebaseapp.com",
+    projectId: "url-shortener-aa45",
+    storageBucket: "url-shortener-aa45.appspot.com",
+    messagingSenderId: "1058499734182",
+    appId: "1:1058499734182:web:24c2bf304c5d9ef9222267",
+    measurementId: "G-QDQ1K5VZEH"
+};
+const app = initializeApp(firebaseConfig)
 
 function HomePage() {
     const [longUrl, setLongUrl] = useState("");
     const [shortenedUrls, setShortenedUrls] = useState<DataModel[]>([]);
+    const [user, setUser] = useState<User>();
+    const [isLoggedIn, setLoginStatus] = useState<boolean>(false);
+
 
     useEffect(() => {
-        ApiServices.getAllUrls()
-            .then(response => {
-                setShortenedUrls(response);
-            })
-            .catch(error => {
-                // console.error('Error fetching shortened URLs:', error);
-            });
-    }, []);
+        const unsubscribe = getAuth().onAuthStateChanged(user => {
+            if (user) {
+                setUser(user);
+                setLoginStatus(true)
+            } else {
+                setUser(undefined)
+                setLoginStatus(false);
+                window.location.href = "/auth";
+            }
+        });
+
+        if (isLoggedIn) {
+            ApiServices.getAllUrls()
+                .then(response => {
+                    setShortenedUrls(response);
+                })
+                .catch(error => {
+                    // console.error('Error fetching shortened URLs:', error);
+                });
+        }
+        return () => unsubscribe();
+    }, [isLoggedIn]);
+
 
 
     const handleGenerateClick = () => {
@@ -31,8 +63,8 @@ function HomePage() {
             });
         setLongUrl("");
     };
-    
-    
+
+
     console.log(shortenedUrls)
 
     return (
@@ -64,7 +96,7 @@ function HomePage() {
                 Your shortened URLs
             </div>
 
-            <TableComponent dataList={shortenedUrls!=null  ? shortenedUrls: []} />
+            <TableComponent dataList={shortenedUrls != null ? shortenedUrls : []} />
 
         </div>
     );

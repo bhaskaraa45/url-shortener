@@ -4,6 +4,7 @@ import './styles/styles.css';
 import HomePage from './pages/home.tsx'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import RedirectionPage from './pages/redirection.tsx';
+import LoginPage from './pages/login.tsx';
 
 
 function App() {
@@ -11,6 +12,11 @@ function App() {
     <div className="app">
       <Router>
         <Routes>
+        <Route
+            exact
+            path='/auth'
+            element={<LoginPage />}
+          ></Route>
           <Route
             exact
             path='/'
