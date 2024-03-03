@@ -18,8 +18,9 @@ type Service interface {
 	AddData(url string, shorturl string, clicked int, userId int) bool
 	GetOGUrl(shorturl string) string
 	GetAll(userId int) ([]model.DataModel, error)
-	CreateUser(email string) bool
+	CreateUser(email string) (bool, int)
 	GetUser(userId int) (string, error)
+	UserExists(email string) (bool, int)
 }
 
 type service struct {
@@ -128,14 +129,15 @@ func (s *service) GetAll(userId int) ([]model.DataModel, error) {
 	return alldata, nil
 }
 
-func (s *service) CreateUser(email string) bool {
-	que := "INSERT INTO users (email) VALUES ( $1 )"
-	_, err := s.db.Exec(que, email)
+func (s *service) CreateUser(email string)( bool, int) {
+	que := "INSERT INTO users (email) VALUES ( $1 ) RETURNING id"
+	var id int
+	err := s.db.QueryRow(que, email).Scan(&id)
 	if err != nil {
 		log.Printf("Failed to create user, err: %v", err)
-		return false
+		return false, 0
 	}
-	return true
+	return true, id
 }
 
 func (s *service) GetUser(userId int) (string, error) {
@@ -146,5 +148,29 @@ func (s *service) GetUser(userId int) (string, error) {
 		log.Printf("Failed to get user, err: %v", err)
 		return "", err
 	}
-	return email , nil
+	return email, nil
+}
+
+func (s *service) UserExists(email string) (bool, int) {
+	query := "SELECT EXISTS(SELECT 1 FROM users WHERE email = $1)"
+	var exists bool
+
+	err := s.db.QueryRow(query, email).Scan(&exists)
+	if err != nil {
+		log.Printf("error checking users email = %v, error: %v", email, err)
+		return false, 0
+	}
+
+	if exists {
+		var id int
+		query = "SELECT id FROM users WHERE email = $1"
+		err := s.db.QueryRow(query, email).Scan(&id)
+		if err != nil {
+			log.Printf("error checking users email = %v, error: %v", email, err)
+			return false, 0
+		}
+		return true, id
+	}
+
+	return false, 0
 }

@@ -41,7 +41,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.POST("/add", s.handlePostData)
 	r.GET("/:shorturl", s.handleShortUrlClick)
 	r.GET("/getAll", s.handleGetAll)
-	r.POST("/verify", s.handleVerify)
+	r.POST("/verify", auth.HandleLogin)
 
 	return r
 }
@@ -49,7 +49,6 @@ func (s *Server) RegisterRoutes() http.Handler {
 func (s *Server) HelloWorldHandler(c *gin.Context) {
 	resp := make(map[string]string)
 	resp["message"] = "Hello World"
-
 	c.JSON(http.StatusOK, resp)
 }
 
@@ -109,21 +108,22 @@ func (s *Server) handleGetAll(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-func (s *Server) handleVerify(c *gin.Context) {
-	var data Token
-	err := json.NewDecoder(c.Request.Body).Decode(&data)
-	if err != nil {
-		resp := internal.CustomResponse("ivalid json data!", http.StatusBadRequest)
-		c.JSON(http.StatusBadRequest, resp)
-		return
-	}
+// func (s *Server) handleVerify(c *gin.Context) {
+// 	var data Token
+// 	err := json.NewDecoder(c.Request.Body).Decode(&data)
+// 	if err != nil {
+// 		resp := internal.CustomResponse("ivalid json data!", http.StatusBadRequest)
+// 		c.JSON(http.StatusBadRequest, resp)
+// 		return
+// 	}
 
-	res, email := auth.Verify(data.IdToken)
+// 	res, email := auth.Verify(data.IdToken)
 
-	if !res {
-		c.JSON(http.StatusUnauthorized, internal.CustomResponse("Failed to verify token", http.StatusUnauthorized))
-	}
-	resp := make(map[string]string)
-	resp["email"] = email
-	c.JSON(http.StatusOK, resp)
-}
+// 	if !res {
+// 		c.JSON(http.StatusUnauthorized, internal.CustomResponse("Failed to verify token", http.StatusUnauthorized))
+// 		return
+// 	}
+// 	resp := make(map[string]string)
+// 	resp["email"] = email
+// 	c.JSON(http.StatusOK, resp)
+// }
