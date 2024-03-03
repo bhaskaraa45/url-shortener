@@ -28,6 +28,7 @@ function HomePage() {
     useEffect(() => {
         const unsubscribe = getAuth().onAuthStateChanged(user => {
             if (user) {
+                const token = user.getIdToken().then((res) => console.log(res))
                 setUser(user);
                 setLoginStatus(true)
             } else {

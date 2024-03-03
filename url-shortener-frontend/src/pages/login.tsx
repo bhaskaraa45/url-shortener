@@ -26,7 +26,7 @@ function LoginPage() {
                 const credential = GoogleAuthProvider.credentialFromResult(result);
                 const token = credential?.idToken;
                 const user = result.user;
-                console.log(user.displayName)
+                console.log(token)
                 setUser(user)
                 if (user) {
                     window.location.href = "/";

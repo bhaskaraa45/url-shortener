@@ -15,9 +15,11 @@ import (
 
 type Service interface {
 	Health() map[string]string
-	AddData(url string, shorturl string, clicked int) bool
+	AddData(url string, shorturl string, clicked int, userId int) bool
 	GetOGUrl(shorturl string) string
-	GetAll() ([]model.DataModel, error)
+	GetAll(userId int) ([]model.DataModel, error)
+	CreateUser(email string) bool
+	GetUser(userId int) (string, error)
 }
 
 type service struct {
@@ -56,9 +58,9 @@ func (s *service) Health() map[string]string {
 	}
 }
 
-func (s *service) AddData(url string, shorturl string, clicked int) bool {
-	que := "INSERT INTO urlshrink (url, shorturl, clicked) VALUES ($1, $2, $3)"
-	_, err := s.db.Exec(que, url, shorturl, clicked)
+func (s *service) AddData(url string, shorturl string, clicked int, userId int) bool {
+	que := "INSERT INTO urlshrink (url, shorturl, clicked, user_id) VALUES ($1, $2, $3, $4)"
+	_, err := s.db.Exec(que, url, shorturl, clicked, userId)
 	if err != nil {
 		log.Printf("Failed to add data, err: %v", err)
 		return false
@@ -70,7 +72,7 @@ func (s *service) GetOGUrl(shorturl string) string {
 	que := "SELECT * FROM urlshrink WHERE shorturl = $1"
 	var data model.DataModel
 	var id int
-	err := s.db.QueryRow(que, shorturl).Scan(&id, &data.Url, &data.ShortUrl, &data.Clicked)
+	err := s.db.QueryRow(que, shorturl).Scan(&id, &data.Url, &data.ShortUrl, &data.Clicked, &data.UserID)
 
 	if err != nil {
 		log.Printf("failed to fetch og url of %v", shorturl)
@@ -95,8 +97,8 @@ func (s *service) UpdateClick(click int, shorturl string) bool {
 	return true
 }
 
-func (s *service) GetAll() ([]model.DataModel, error) {
-	que := "SELECT * FROM urlshrink ORDER BY id ASC"
+func (s *service) GetAll(userId int) ([]model.DataModel, error) {
+	que := "SELECT * FROM urlshrink WHERE user_id = userId ORDER BY id ASC"
 	rows, err := s.db.Query(que)
 
 	if err != nil {
@@ -110,7 +112,7 @@ func (s *service) GetAll() ([]model.DataModel, error) {
 	for rows.Next() {
 		var data model.DataModel
 		var id int
-		err := rows.Scan(&id, &data.Url, &data.ShortUrl, &data.Clicked)
+		err := rows.Scan(&id, &data.Url, &data.ShortUrl, &data.Clicked, &data.UserID)
 		if err != nil {
 			log.Printf("error scanning data row: %v", err)
 			return nil, err
@@ -124,4 +126,25 @@ func (s *service) GetAll() ([]model.DataModel, error) {
 	}
 
 	return alldata, nil
+}
+
+func (s *service) CreateUser(email string) bool {
+	que := "INSERT INTO users (email) VALUES ( $1 )"
+	_, err := s.db.Exec(que, email)
+	if err != nil {
+		log.Printf("Failed to create user, err: %v", err)
+		return false
+	}
+	return true
+}
+
+func (s *service) GetUser(userId int) (string, error) {
+	que := "SELECT * FROM users WHERE id = $1 "
+	var email string
+	err := s.db.QueryRow(que, userId).Scan(&email)
+	if err != nil {
+		log.Printf("Failed to get user, err: %v", err)
+		return "", err
+	}
+	return email , nil
 }

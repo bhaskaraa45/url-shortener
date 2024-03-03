@@ -5,39 +5,46 @@ import (
 	"fmt"
 	"net/http"
 	"url-shortener-backend/internal"
+	"url-shortener-backend/internal/auth"
 	"url-shortener-backend/internal/model"
 	"url-shortener-backend/internal/services"
 
 	"github.com/gin-gonic/gin"
 )
 
-func (s *Server) RegisterRoutes() http.Handler {
-    r := gin.Default()
-
-    // Add CORS middleware
-    r.Use(func(c *gin.Context) {
-        c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-        c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-        c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-
-        // Handle preflight requests
-        if c.Request.Method == "OPTIONS" {
-            c.AbortWithStatus(http.StatusOK)
-            return
-        }
-		
-        c.Next()
-    })
-
-    r.GET("/", s.HelloWorldHandler)
-    r.GET("/health", s.healthHandler)
-    r.POST("/add", s.handlePostData)
-    r.GET("/:shorturl", s.handleShortUrlClick)
-    r.GET("/getAll", s.handleGetAll)
-
-    return r
+type Token struct {
+	IdToken string `json:"idToken"`
 }
 
+var userId = 1 //TODO: change this
+
+func (s *Server) RegisterRoutes() http.Handler {
+	r := gin.Default()
+
+	// Add CORS middleware
+	r.Use(func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+		// Handle preflight requests
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(http.StatusOK)
+			return
+		}
+
+		c.Next()
+	})
+
+	r.GET("/", s.HelloWorldHandler)
+	r.GET("/health", s.healthHandler)
+	r.POST("/add", s.handlePostData)
+	r.GET("/:shorturl", s.handleShortUrlClick)
+	r.GET("/getAll", s.handleGetAll)
+	r.POST("/verify", s.handleVerify)
+
+	return r
+}
 
 func (s *Server) HelloWorldHandler(c *gin.Context) {
 	resp := make(map[string]string)
@@ -68,8 +75,7 @@ func (s *Server) handlePostData(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, resp)
 		return
 	}
-
-	res := s.db.AddData(data.Url, shortUrl, 0)
+	res := s.db.AddData(data.Url, shortUrl, 0, userId)
 
 	if res {
 		// resp := internal.CustomResponse("data successfully added!", http.StatusOK)
@@ -95,10 +101,29 @@ func (s *Server) handleShortUrlClick(c *gin.Context) {
 }
 
 func (s *Server) handleGetAll(c *gin.Context) {
-	res, err := s.db.GetAll()
-	if err !=nil {
+	res, err := s.db.GetAll(userId)
+	if err != nil {
 		resp := internal.CustomResponse("failed to get data!", http.StatusBadRequest)
 		c.JSON(http.StatusBadRequest, resp)
 	}
 	c.JSON(http.StatusOK, res)
+}
+
+func (s *Server) handleVerify(c *gin.Context) {
+	var data Token
+	err := json.NewDecoder(c.Request.Body).Decode(&data)
+	if err != nil {
+		resp := internal.CustomResponse("ivalid json data!", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, resp)
+		return
+	}
+
+	res, email := auth.Verify(data.IdToken)
+
+	if !res {
+		c.JSON(http.StatusUnauthorized, internal.CustomResponse("Failed to verify token", http.StatusUnauthorized))
+	}
+	resp := make(map[string]string)
+	resp["email"] = email
+	c.JSON(http.StatusOK, resp)
 }
