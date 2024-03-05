@@ -35,7 +35,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 			return
 		}
 
-		if c.FullPath() == "/verify" {
+		if c.FullPath() == "/verify" || c.FullPath() == "/:shorturl"{
 			c.Next()
 			return
 		}
