@@ -99,7 +99,7 @@ func (s *service) UpdateClick(click int, shorturl string) bool {
 }
 
 func (s *service) GetAll(userId int) ([]model.DataModel, error) {
-	que := "SELECT * FROM urlshrink WHERE user_id = $1 ORDER BY id ASC"
+	que := "SELECT * FROM urlshrink WHERE user_id = $1 ORDER BY id DESC"
 	rows, err := s.db.Query(que, userId)
 
 	if err != nil {
@@ -129,7 +129,7 @@ func (s *service) GetAll(userId int) ([]model.DataModel, error) {
 	return alldata, nil
 }
 
-func (s *service) CreateUser(email string)( bool, int) {
+func (s *service) CreateUser(email string) (bool, int) {
 	que := "INSERT INTO users (email) VALUES ( $1 ) RETURNING id"
 	var id int
 	err := s.db.QueryRow(que, email).Scan(&id)
