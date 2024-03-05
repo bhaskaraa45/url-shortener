@@ -12,6 +12,9 @@
 }
 
 .title{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     font-size: 28px;
     margin-bottom: 16px;
 }
@@ -78,4 +81,13 @@
 .google-icon{
     padding: 0;
     margin-right: 6px;
+}
+
+.profilePic{
+    display: flex;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    cursor: pointer;
 }

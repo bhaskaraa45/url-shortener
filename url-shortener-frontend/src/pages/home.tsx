@@ -6,6 +6,8 @@ import '../styles/styles.css'
 import { initializeApp } from "firebase/app";
 import { getAuth, User } from "firebase/auth";
 import { redirect } from "react-router-dom"; // Import Redirect from react-router-dom
+import MenuListComposition from "../components/menuComponent.tsx";
+import { useNavigate } from 'react-router-dom';
 
 const firebaseConfig = {
     apiKey: "AIzaSyBnCNk7cot7SKQH4KZLi0o3BQtl6JZir6U",
@@ -24,17 +26,17 @@ function HomePage() {
     const [user, setUser] = useState<User>();
     const [isLoggedIn, setLoginStatus] = useState<boolean>(false);
 
+  const navigate = useNavigate();
 
     useEffect(() => {
         const unsubscribe = getAuth().onAuthStateChanged(user => {
             if (user) {
-                const token = user.getIdToken().then((res) => console.log(res))
                 setUser(user);
                 setLoginStatus(true)
             } else {
                 setUser(undefined)
                 setLoginStatus(false);
-                window.location.href = "/auth";
+                navigate("/auth")
             }
         });
 
@@ -66,12 +68,20 @@ function HomePage() {
     };
 
 
-    console.log(shortenedUrls)
+    const defaultPic: string = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/512px-Windows_10_Default_Profile_Picture.svg.png?20221210150350"
+    var imgUrl: string = defaultPic
+
+    // if (user != undefined) {
+    //     imgUrl = user.photoURL ? user.photoURL : defaultPic
+    //     console.log(imgUrl)
+    // }
 
     return (
         <div className="main rounded-lg border-rose-500 shadow-lg">
             <div className="title text-3xl font-semibold text-white/[.85]">
                 Shrink your long URL
+                <MenuListComposition imgUrl={imgUrl} />
+
             </div>
             <label className="inputLabel text-lg font-normal text-white/[.85]">
                 Enter a long URL

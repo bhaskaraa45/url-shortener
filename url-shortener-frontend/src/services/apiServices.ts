@@ -1,11 +1,11 @@
 class ApiServices {
 
-    static endpoint: string = process.env.REACT_APP_BACKEND_DOMAIN  ;
+    static endpoint: string = process.env.REACT_APP_BACKEND_DOMAIN;
     static async generateShortUrl(url: string) {
         // const endpoint: string = "localhost:8080";
         console.log(ApiServices.endpoint)
         try {
-            const response = await fetch(`http://${ApiServices.endpoint}/add`, {
+            const response = await fetch(`https://${ApiServices.endpoint}/add`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -29,9 +29,9 @@ class ApiServices {
         }
     }
 
-    static async getAllUrls(){
+    static async getAllUrls() {
         try {
-            const response = await fetch(`http://${ApiServices.endpoint}/getAll`, {
+            const response = await fetch(`https://${ApiServices.endpoint}/getAll`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -44,10 +44,9 @@ class ApiServices {
         }
     }
 
-    static async getOgUrl(shorturl: string){
+    static async getOgUrl(shorturl: string) {
         try {
-            console.log(ApiServices.endpoint)
-            const response = await fetch(`http://${ApiServices.endpoint}/${shorturl}`, {
+            const response = await fetch(`https://${ApiServices.endpoint}/${shorturl}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -55,6 +54,24 @@ class ApiServices {
             });
             const data = await response.json();
             return data["url"];
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    static async verifyUser(idToken: string) {
+        try {
+            const response = await fetch(`https://${ApiServices.endpoint}/verify`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "idToken": idToken
+                })
+            });
+            return response
+            
         } catch (error) {
             console.error(error);
         }

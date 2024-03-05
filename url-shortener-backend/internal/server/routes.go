@@ -96,7 +96,8 @@ func (s *Server) handleShortUrlClick(c *gin.Context) {
 	resp := make(map[string]string)
 	resp["url"] = og
 	resp["shorturl"] = shorturl
-	c.JSON(http.StatusOK, resp)
+	// c.JSON(http.StatusOK, resp)
+	c.Redirect(http.StatusSeeOther, og)
 }
 
 func (s *Server) handleGetAll(c *gin.Context) {

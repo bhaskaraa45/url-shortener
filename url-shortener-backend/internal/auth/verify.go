@@ -89,7 +89,7 @@ func HandleLogin(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie("session", tokenString, 5*24*60*60, "/", "", false, true)
+	c.SetCookie("token", tokenString, 5*24*60*60, "/", "localhost", false, false)
 
 	resp := make(map[string]string)
 	resp["email"] = email
