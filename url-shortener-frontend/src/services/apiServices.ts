@@ -16,14 +16,14 @@ class ApiServices {
                 })
             });
 
-            console.log("HELLO WORLD")
+            console.log(response)
+
 
             if (!response.ok) {
                 throw new Error('Failed to generate short URL');
             }
 
             const data = await response.json();
-            console.log(data["shorturl"]);
             return data;
         } catch (error) {
             console.error(error);
@@ -39,6 +39,9 @@ class ApiServices {
                     'Content-Type': 'application/json'
                 },
             });
+            if (!response.ok) {
+                throw new Error('Failed to get all urls');
+            }
             const data = await response.json();
             return data;
         } catch (error) {

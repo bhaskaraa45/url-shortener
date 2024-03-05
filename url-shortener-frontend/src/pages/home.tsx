@@ -45,7 +45,9 @@ function HomePage() {
         if (isLoggedIn) {
             ApiServices.getAllUrls()
                 .then(response => {
-                    setShortenedUrls(response);
+                    if (response) {
+                        setShortenedUrls(response);
+                    }
                 })
                 .catch(error => {
                     // console.error('Error fetching shortened URLs:', error);
@@ -56,10 +58,11 @@ function HomePage() {
 
 
     const handleGenerateClick = () => {
-        console.log(longUrl);
         ApiServices.generateShortUrl(longUrl)
             .then(newShortUrl => {
-                // Append the new short URL to the existing list
+                if (shortenedUrls == undefined) {
+                    setShortenedUrls([])
+                }
                 setShortenedUrls(prevShortenedUrls => [...prevShortenedUrls, newShortUrl]);
             })
             .catch(error => {
@@ -137,7 +140,7 @@ function HomePage() {
                 Your shortened URLs
             </div>
 
-            <TableComponent dataList={shortenedUrls != null ? shortenedUrls : []} />
+            <TableComponent dataList={shortenedUrls == undefined || shortenedUrls == null ? [] : shortenedUrls} />
 
         </div>
     );
