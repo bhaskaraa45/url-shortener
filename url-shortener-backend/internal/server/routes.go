@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"url-shortener-backend/internal"
 	"url-shortener-backend/internal/auth"
+	"url-shortener-backend/internal/guard"
 	"url-shortener-backend/internal/model"
 	"url-shortener-backend/internal/services"
 
@@ -31,6 +32,29 @@ func (s *Server) RegisterRoutes() http.Handler {
 		// Handle preflight requests
 		if c.Request.Method == "OPTIONS" {
 			c.AbortWithStatus(http.StatusOK)
+			return
+		}
+
+		if c.FullPath() == "/verify" {
+			c.Next()
+			return
+		}
+
+		cookie, err := c.Request.Cookie("token")
+		if err != nil || cookie == nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token cookie not found"})
+			c.Abort()
+			return
+		}
+		cookieToken := "aa45"
+		if cookie != nil {
+			cookieToken = cookie.Value
+		}
+
+		res := guard.VerifyToken(cookieToken)
+		if !res {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+			c.Abort()
 			return
 		}
 
