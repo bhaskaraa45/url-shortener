@@ -99,8 +99,8 @@ func (s *service) UpdateClick(click int, shorturl string) bool {
 }
 
 func (s *service) GetAll(userId int) ([]model.DataModel, error) {
-	que := "SELECT * FROM urlshrink WHERE user_id = userId ORDER BY id ASC"
-	rows, err := s.db.Query(que)
+	que := "SELECT * FROM urlshrink WHERE user_id = $1 ORDER BY id ASC"
+	rows, err := s.db.Query(que, userId)
 
 	if err != nil {
 		log.Printf("Error while getting all data: %v", err)

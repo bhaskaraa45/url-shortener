@@ -93,15 +93,32 @@ func HandleLogin(c *gin.Context) {
 		Name:     "token",
 		Domain:   "localhost",
 		Path:     "/",
-		Secure:   true,                        
+		Secure:   true,
 		HttpOnly: true,
 		Expires:  time.Now().Add(3 * 24 * time.Hour),
 		Value:    tokenString,
 		SameSite: http.SameSiteNoneMode,
 	}
-    http.SetCookie(c.Writer, &cookie)
+	http.SetCookie(c.Writer, &cookie)
 
 	resp := make(map[string]string)
 	resp["email"] = email
 	c.JSON(http.StatusOK, resp)
+}
+
+func HandleLogout(c *gin.Context) {
+	cookie := http.Cookie{
+		Name:     "token",
+		Domain:   "localhost",
+		Path:     "/",
+		Secure:   true,
+		HttpOnly: true,
+		Value:    "",
+		Expires:  time.Now().Add(0 * time.Second),
+		SameSite: http.SameSiteNoneMode,
+		MaxAge:   -1,
+	}
+	http.SetCookie(c.Writer, &cookie)
+
+	c.JSON(http.StatusAccepted, internal.CustomResponse("successfully logged out!", http.StatusAccepted))
 }

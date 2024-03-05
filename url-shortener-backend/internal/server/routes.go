@@ -17,7 +17,7 @@ type Token struct {
 	IdToken string `json:"idToken"`
 }
 
-var userId = 0 
+var userId = 0
 
 func (s *Server) RegisterRoutes() http.Handler {
 	r := gin.Default()
@@ -68,6 +68,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.GET("/:shorturl", s.handleShortUrlClick)
 	r.GET("/getAll", s.handleGetAll)
 	r.POST("/verify", auth.HandleLogin)
+	r.GET("/logout", auth.HandleLogout)
 
 	return r
 }
@@ -94,12 +95,18 @@ func (s *Server) handlePostData(c *gin.Context) {
 		return
 	}
 
-	shortUrl, err := services.GenerateShortId()
-	if err != nil {
-		resp := internal.CustomResponse(err.Error(), http.StatusBadRequest)
-		c.JSON(http.StatusBadRequest, resp)
-		return
+	shortUrl := data.ShortUrl
+
+	if len(shortUrl) == 0 {
+		temp, err := services.GenerateShortId()
+		shortUrl = temp
+		if err != nil {
+			resp := internal.CustomResponse(err.Error(), http.StatusBadRequest)
+			c.JSON(http.StatusBadRequest, resp)
+			return
+		}
 	}
+
 	res := s.db.AddData(data.Url, shortUrl, 0, userId)
 
 	if res {
@@ -122,7 +129,6 @@ func (s *Server) handleShortUrlClick(c *gin.Context) {
 	resp := make(map[string]string)
 	resp["url"] = og
 	resp["shorturl"] = shorturl
-	// c.JSON(http.StatusOK, resp)
 	c.Redirect(http.StatusSeeOther, og)
 }
 
