@@ -79,7 +79,7 @@ func HandleLogin(c *gin.Context) {
 	jwtToken := jwt.New(jwt.SigningMethodHS256)
 	jwtToken.Claims = jwt.MapClaims{
 		"sub": userId,
-		"exp": time.Now().Add(5 * 24 * time.Hour).Unix(),
+		"exp": time.Now().Add(3 * 24 * time.Hour).Unix(),
 	}
 
 	tokenString, err := jwtToken.SignedString([]byte(os.Getenv("SECRET_KEY")))
@@ -89,14 +89,13 @@ func HandleLogin(c *gin.Context) {
 		return
 	}
 
-	// c.SetCookie("token", tokenString, 5*24*60*60, "/", "localhost", false, true)
 	cookie := http.Cookie{
 		Name:     "token",
 		Domain:   "localhost",
 		Path:     "/",
 		Secure:   true,                        
 		HttpOnly: true,
-		Expires:  time.Now().Add(5 * 24 * time.Hour),
+		Expires:  time.Now().Add(3 * 24 * time.Hour),
 		Value:    tokenString,
 		SameSite: http.SameSiteNoneMode,
 	}

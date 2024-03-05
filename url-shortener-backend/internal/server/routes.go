@@ -17,7 +17,7 @@ type Token struct {
 	IdToken string `json:"idToken"`
 }
 
-var userId = 1 //TODO: change this
+var userId = 0 
 
 func (s *Server) RegisterRoutes() http.Handler {
 	r := gin.Default()
@@ -51,12 +51,13 @@ func (s *Server) RegisterRoutes() http.Handler {
 			cookieToken = cookie.Value
 		}
 
-		res := guard.VerifyToken(cookieToken)
+		res, sub := guard.VerifyToken(cookieToken)
 		if !res {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
 			c.Abort()
 			return
 		}
+		userId = sub
 
 		c.Next()
 	})
