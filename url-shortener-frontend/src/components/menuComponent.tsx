@@ -12,7 +12,7 @@ import { getAuth, signOut, User } from "firebase/auth";
 
 
 
-export default function MenuListComposition({imgUrl} : {imgUrl : string} ) {
+export default function MenuListComposition({imgUrl, userName} : {imgUrl : string, userName: string} ) {
     const [open, setOpen] = React.useState(false);
     const anchorRef = React.useRef<HTMLButtonElement>(null);
 
@@ -71,6 +71,7 @@ export default function MenuListComposition({imgUrl} : {imgUrl : string} ) {
                 >
                     <img className="profilePic border-2 border-red-500" src={imgUrl}>
                     </img>
+                    <div className='userName'>{userName}</div>
                 </Button>
                 <Popper
                     open={open}

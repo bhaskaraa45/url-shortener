@@ -5,8 +5,9 @@ class ApiServices {
         // const endpoint: string = "localhost:8080";
         console.log(ApiServices.endpoint)
         try {
-            const response = await fetch(`https://${ApiServices.endpoint}/add`, {
+            const response = await fetch(`http://${ApiServices.endpoint}/add`, {
                 method: 'POST',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -31,8 +32,9 @@ class ApiServices {
 
     static async getAllUrls() {
         try {
-            const response = await fetch(`https://${ApiServices.endpoint}/getAll`, {
+            const response = await fetch(`http://${ApiServices.endpoint}/getAll`, {
                 method: 'GET',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -46,8 +48,9 @@ class ApiServices {
 
     static async getOgUrl(shorturl: string) {
         try {
-            const response = await fetch(`https://${ApiServices.endpoint}/${shorturl}`, {
+            const response = await fetch(`http://${ApiServices.endpoint}/${shorturl}`, {
                 method: 'GET',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -61,8 +64,9 @@ class ApiServices {
 
     static async verifyUser(idToken: string) {
         try {
-            const response = await fetch(`https://${ApiServices.endpoint}/verify`, {
+            const response = await fetch(`http://${ApiServices.endpoint}/verify`, {
                 method: 'POST',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json'
                 },

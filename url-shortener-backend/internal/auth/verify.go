@@ -89,7 +89,18 @@ func HandleLogin(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie("token", tokenString, 5*24*60*60, "/", "localhost", false, false)
+	// c.SetCookie("token", tokenString, 5*24*60*60, "/", "localhost", false, true)
+	cookie := http.Cookie{
+		Name:     "token",
+		Domain:   "localhost",
+		Path:     "/",
+		Secure:   true,                        
+		HttpOnly: true,
+		Expires:  time.Now().Add(5 * 24 * time.Hour),
+		Value:    tokenString,
+		SameSite: http.SameSiteNoneMode,
+	}
+    http.SetCookie(c.Writer, &cookie)
 
 	resp := make(map[string]string)
 	resp["email"] = email

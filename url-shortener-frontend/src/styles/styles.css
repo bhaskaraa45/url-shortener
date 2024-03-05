@@ -1,8 +1,8 @@
 .main{
     margin-top: 12px;
-    background-color: #56565677;
-    width: 65vw;
-    height: 75vh;
+    background-color: #3032347b;
+    width: 85vw;
+    height: 95vh;
     display: flex;
     flex-direction: column;
     justify-content: start;
@@ -19,17 +19,30 @@
     margin-bottom: 16px;
 }
 
-.inputLable{
-    font-size: 20px;
+.inputLabel{
+    font-size: 16px;
 }
 
 .urlInput{
-    width: 100%;
+    width: 40vw;
     height: 50px;
     background-color: rgb(80, 80, 80);
     outline: none;
-    padding-left: 16px;
+    padding-left: 15px;
 }
+.pathInput{
+    width: 40vw;
+    height: 50px;
+    background-color: rgb(80, 80, 80);
+    outline: none;
+    padding-left: 15px;
+}
+
+.inputContainers{
+    display: flex;
+    justify-content: space-between;
+}
+
 
 .app{
     display: flex;
@@ -85,9 +98,15 @@
 
 .profilePic{
     display: flex;
-    height: 40px;
-    width: 40px;
+    height: 36px;
+    width: 36px;
     border-radius: 50%;
     object-fit: cover;
     cursor: pointer;
+}
+
+.userName{
+    margin-left: 4px;
+    font-size: 16px;
+    font-weight: 600;
 }

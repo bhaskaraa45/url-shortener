@@ -30,20 +30,13 @@ function LoginPage() {
         const user = result.user;
         user.getIdToken()
           .then((token) => {
-            // Perform token verification request in the background
             ApiServices.verifyUser(token)
               .then((resp) => {
                 if (resp == undefined) {
                   return;
                 }
                 if (resp.status === 200) {
-                  console.log(resp.headers.get("Set-Cookie"))
-                  console.log(resp.headers.getSetCookie())
                   navigate("/")
-                  // console.log(cookieHeader)
-                  // if (cookieHeader) {
-                  //   document.cookie = cookieHeader;
-                  // }
                 } else {
                 }
               })

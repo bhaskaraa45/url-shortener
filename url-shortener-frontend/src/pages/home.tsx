@@ -22,11 +22,13 @@ const app = initializeApp(firebaseConfig)
 
 function HomePage() {
     const [longUrl, setLongUrl] = useState("");
+    const [shortUrl, setShortUrl] = useState("https://url.bhaskaraa45.me/");
     const [shortenedUrls, setShortenedUrls] = useState<DataModel[]>([]);
     const [user, setUser] = useState<User>();
     const [isLoggedIn, setLoginStatus] = useState<boolean>(false);
+    const myDomain: string = "https://url.bhaskaraa45.me/"
 
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const unsubscribe = getAuth().onAuthStateChanged(user => {
@@ -53,7 +55,6 @@ function HomePage() {
     }, [isLoggedIn]);
 
 
-
     const handleGenerateClick = () => {
         console.log(longUrl);
         ApiServices.generateShortUrl(longUrl)
@@ -67,6 +68,15 @@ function HomePage() {
         setLongUrl("");
     };
 
+    const handleShortUrlChnage = (url: string) => {
+        if (!url.startsWith(myDomain)) {
+            return;
+        }
+        if (url.length >= myDomain.length) {
+            setShortUrl(url)
+        }
+    }
+
 
     const defaultPic: string = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/512px-Windows_10_Default_Profile_Picture.svg.png?20221210150350"
     var imgUrl: string = defaultPic
@@ -77,24 +87,44 @@ function HomePage() {
     // }
 
     return (
-        <div className="main rounded-lg border-rose-500 shadow-lg">
+        // <div className="main rounded-lg border-rose-500 shadow-lg">
+        <div className="main rounded-lg border-rose-500 ">
             <div className="title text-3xl font-semibold text-white/[.85]">
                 Shrink your long URL
-                <MenuListComposition imgUrl={imgUrl} />
+                <MenuListComposition imgUrl={imgUrl} userName="bhaskar" />
 
             </div>
-            <label className="inputLabel text-lg font-normal text-white/[.85]">
-                Enter a long URL
-                <br />
-                <input
-                    className="urlInput border-2 rounded-md border-grey focus:border-indigo-500 text-base shadow-md"
-                    autoComplete='off'
-                    type='text'
-                    placeholder="e.g. https://subdomain.long-domain.com/long-path"
-                    value={longUrl}
-                    onChange={(e) => setLongUrl(e.target.value)}
-                />
-            </label>
+            <div className="inputContainers">
+                <label className="inputLabel text-lg font-normal text-white/[.85]">
+                    Enter a long URL
+                    <br />
+                    <input
+                        className="urlInput border-2 rounded-md border-grey focus:border-indigo-500 text-base shadow-md"
+                        autoComplete='off'
+                        type='text'
+                        placeholder="e.g. https://subdomain.long-domain.com/long-path"
+                        value={longUrl}
+                        onChange={(e) => setLongUrl(e.target.value)}
+                    />
+                </label>
+                <div className="gapInputs">
+
+                </div>
+                <label className="inputLabel text-lg font-normal text-white/[.85]">
+                    Enter custom path (Optional)
+                    <br />
+                    <input
+                        className="pathInput border-2 rounded-md border-grey focus:border-indigo-500 text-base shadow-md"
+                        autoComplete='off'
+                        type='text'
+                        placeholder="e.g. your-path"
+                        value={shortUrl}
+                        onChange={
+                            (e) => handleShortUrlChnage(e.target.value)
+                        }
+                    />
+                </label>
+            </div>
             <button
                 type="button"
                 className="generateBtn rounded-md shadow-md"
