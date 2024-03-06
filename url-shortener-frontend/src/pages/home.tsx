@@ -83,6 +83,8 @@ function HomePage() {
                 }
                 setShortenedUrls(prevShortenedUrls => [newShortUrl, ...prevShortenedUrls]);
                 setLongUrl("");
+                setAvaliability(undefined)
+                setShortUrl(myDomain)
             })
             .catch(error => {
                 // Handle error
@@ -123,6 +125,17 @@ function HomePage() {
             return false;
         }
     }
+    const deleteFunction = (id: number) => {
+        ApiServices.delete(id).then((res) => {
+            if (res) {
+                const index = shortenedUrls.findIndex(item => item.id === id);
+                if (index !== -1) {
+                    const updatedShortenedUrls = [...shortenedUrls.slice(0, index), ...shortenedUrls.slice(index + 1)];
+                    setShortenedUrls(updatedShortenedUrls);
+                }
+            }
+        })
+    };
 
     const defaultPic: string = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/512px-Windows_10_Default_Profile_Picture.svg.png?20221210150350"
     var imgUrl: string = defaultPic;
@@ -186,7 +199,7 @@ function HomePage() {
                 Your shortened URLs
             </div>
 
-            <TableComponent dataList={shortenedUrls == undefined || shortenedUrls == null ? [] : shortenedUrls} />
+            <TableComponent dataList={shortenedUrls == undefined || shortenedUrls == null ? [] : shortenedUrls} deleteFunction={deleteFunction} />
         </div>
     );
 }

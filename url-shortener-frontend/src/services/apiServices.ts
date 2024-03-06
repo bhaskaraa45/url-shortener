@@ -127,6 +127,21 @@ class ApiServices {
             console.error(error);
         }
     }
+    static async delete(id: number) {
+        try {
+            const response = await fetch(`http://${ApiServices.endpoint}/delete/${id}`, {
+                method: 'DELETE',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            });
+
+            return response.ok
+        } catch (error) {
+            console.error(error);
+        }
+    }
 }
 
 export default ApiServices;

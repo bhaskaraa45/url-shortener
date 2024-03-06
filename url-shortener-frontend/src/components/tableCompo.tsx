@@ -5,7 +5,7 @@ import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import ModalComponent from "./modal.tsx";
 
-function TableComponent({ dataList }: { dataList: DataModel[] }) {
+function TableComponent({ dataList, deleteFunction }: { dataList: DataModel[] , deleteFunction: Function}) {
     const backendDomain = process.env.REACT_APP_BACKEND_DOMAIN
     return (
         <div className="tableData relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -54,7 +54,7 @@ function TableComponent({ dataList }: { dataList: DataModel[] }) {
                                     </button>} position="center center">
                                         <div className="popUpMain"> POPUP</div>
                                     </Popup> */}
-                                    <ModalComponent />
+                                    <ModalComponent deleteFunction={deleteFunction} id={data.id}/>
 
                                 </td>
                             </tr>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-function ModalComponent() {
+function ModalComponent({ deleteFunction , id}: {deleteFunction : Function, id:number}) {
     const [isVisible, setIsVisible] = useState(false);
 
     const toggleModal = () => {
@@ -9,6 +9,7 @@ function ModalComponent() {
 
     const handleYesClick = () => {
         console.log("Yes, I'm sure");
+        deleteFunction(id);
         setIsVisible(false);
     };
 
