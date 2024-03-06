@@ -1,9 +1,8 @@
-import logo from './logo.svg';
 import './App.css';
 import './styles/styles.css';
 import HomePage from './pages/home.tsx'
+import NotFound from './pages/pageNotFound.tsx'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import RedirectionPage from './pages/redirection.tsx';
 import LoginPage from './pages/login.tsx';
 
 
@@ -23,7 +22,7 @@ function App() {
             element={<HomePage />}
           ></Route>
 
-          <Route path="*" element={<RedirectionPage />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
     </div>
