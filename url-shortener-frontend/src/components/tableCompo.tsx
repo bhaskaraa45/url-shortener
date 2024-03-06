@@ -3,7 +3,8 @@ import DataModel from "../models/datamodel";
 import '../styles/styles.css'
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
-import ModalComponent from "./modal.tsx";
+import ModalComponent from "./deleteWarningModal.tsx";
+import SessionExpiredModal from "./sessionExpireModal.tsx";
 
 function TableComponent({ dataList, deleteFunction }: { dataList: DataModel[] , deleteFunction: Function}) {
     const backendDomain = process.env.REACT_APP_BACKEND_DOMAIN
@@ -54,7 +55,8 @@ function TableComponent({ dataList, deleteFunction }: { dataList: DataModel[] , 
                                     </button>} position="center center">
                                         <div className="popUpMain"> POPUP</div>
                                     </Popup> */}
-                                    <ModalComponent deleteFunction={deleteFunction} id={data.id}/>
+                                    {/* <ModalComponent deleteFunction={deleteFunction} id={data.id}/> */}
+                                    <SessionExpiredModal/>
 
                                 </td>
                             </tr>

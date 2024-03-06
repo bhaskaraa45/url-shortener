@@ -74,6 +74,10 @@ function HomePage() {
             return
         }
 
+        if (!shortUrl.startsWith(myDomain)) {
+            setAvaliability(false)
+        }
+
         setValidity(true)
         const parsedUrl = new URL(shortUrl)
         ApiServices.generateShortUrl(longUrl, parsedUrl.pathname.substring(1))
@@ -139,12 +143,19 @@ function HomePage() {
 
     const defaultPic: string = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/512px-Windows_10_Default_Profile_Picture.svg.png?20221210150350"
     var imgUrl: string = defaultPic;
+    var userName:string = "user"
+    if (user) {
+        const temp = user.displayName
+        if (temp!=null) {
+            userName = temp.split(" ")[0]
+        }
+    }
 
     return (
         <div className="main rounded-lg border-rose-500">
             <div className="title text-3xl font-semibold text-white/[.85]">
                 Shrink your long URL
-                <MenuListComposition imgUrl={imgUrl} userName="bhaskar" />
+                <MenuListComposition imgUrl={imgUrl} userName={userName} />
             </div>
             <div className="inputContainers">
                 <label className="inputLabel text-lg font-normal text-white/[.85]">

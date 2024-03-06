@@ -1,8 +1,22 @@
-class ApiServices {
+import { getAuth, signOut, User } from "firebase/auth";
 
+class ApiServices {
     static endpoint: string = process.env.REACT_APP_BACKEND_DOMAIN;
+
+    static async handleFirebseLogout() {
+        const auth = getAuth();
+        signOut(auth).then(() => {
+            ApiServices.logout().then((res) => {
+                if (res) {
+                    this.logout();
+                }
+            })
+        }).catch((error) => {
+        });
+    }
+
+
     static async generateShortUrl(url: string, shorturl: string) {
-        // const endpoint: string = "localhost:8080";
         console.log(ApiServices.endpoint)
         try {
             const response = await fetch(`http://${ApiServices.endpoint}/add`, {
@@ -16,9 +30,6 @@ class ApiServices {
                     "shorturl": shorturl,
                 })
             });
-
-            console.log(response)
-
 
             if (!response.ok) {
                 throw new Error('Failed to generate short URL');
@@ -40,6 +51,7 @@ class ApiServices {
                     'Content-Type': 'application/json'
                 },
             });
+           
             if (!response.ok) {
                 throw new Error('Failed to get all urls');
             }
@@ -59,6 +71,7 @@ class ApiServices {
                     'Content-Type': 'application/json'
                 },
             });
+
             const data = await response.json();
             return data["url"];
         } catch (error) {
@@ -114,12 +127,9 @@ class ApiServices {
                 })
             });
 
-            if(response.status == 401){
-                //handle logout
-            }
-            else if (response.status === 200) {
+            if (response.status === 200) {
                 return true
-            }else{
+            } else {
                 return false;
             }
 
@@ -136,7 +146,6 @@ class ApiServices {
                     'Content-Type': 'application/json'
                 },
             });
-
             return response.ok
         } catch (error) {
             console.error(error);
