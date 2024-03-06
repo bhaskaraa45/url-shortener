@@ -58,12 +58,14 @@ function HomePage() {
 
 
     const handleGenerateClick = () => {
-        ApiServices.generateShortUrl(longUrl)
+        const parsedUrl = new URL(shortUrl)
+        console.log(parsedUrl.pathname)
+        ApiServices.generateShortUrl(longUrl, parsedUrl.pathname.substring(1))
             .then(newShortUrl => {
                 if (shortenedUrls == undefined) {
                     setShortenedUrls([])
                 }
-                setShortenedUrls(prevShortenedUrls => [...prevShortenedUrls, newShortUrl]);
+                setShortenedUrls(prevShortenedUrls => [newShortUrl, ...prevShortenedUrls]);
             })
             .catch(error => {
                 // Handle error
@@ -95,7 +97,6 @@ function HomePage() {
             <div className="title text-3xl font-semibold text-white/[.85]">
                 Shrink your long URL
                 <MenuListComposition imgUrl={imgUrl} userName="bhaskar" />
-
             </div>
             <div className="inputContainers">
                 <label className="inputLabel text-lg font-normal text-white/[.85]">
@@ -116,16 +117,22 @@ function HomePage() {
                 <label className="inputLabel text-lg font-normal text-white/[.85]">
                     Enter custom path (Optional)
                     <br />
-                    <input
-                        className="pathInput border-2 rounded-md border-grey focus:border-indigo-500 text-base shadow-md"
-                        autoComplete='off'
-                        type='text'
-                        placeholder="e.g. your-path"
-                        value={shortUrl}
-                        onChange={
-                            (e) => handleShortUrlChnage(e.target.value)
-                        }
-                    />
+                    <form className="pathForm">
+                        <input
+                            className="pathInput border-2 rounded-md border-grey focus:border-indigo-500 text-base shadow-md"
+                            autoComplete='off'
+                            type='text'
+                            placeholder="e.g. your-path"
+                            value={shortUrl}
+                            onChange={
+                                (e) => handleShortUrlChnage(e.target.value)
+                            }
+                        />
+                        <button onClick={()=> {console.log("helllo")}} className="checkButton">
+                            check
+                        </button>
+                    </form>
+
                 </label>
             </div>
             <button

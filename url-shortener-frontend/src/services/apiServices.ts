@@ -1,7 +1,7 @@
 class ApiServices {
 
     static endpoint: string = process.env.REACT_APP_BACKEND_DOMAIN;
-    static async generateShortUrl(url: string) {
+    static async generateShortUrl(url: string, shorturl: string) {
         // const endpoint: string = "localhost:8080";
         console.log(ApiServices.endpoint)
         try {
@@ -12,7 +12,8 @@ class ApiServices {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    "url": url
+                    "url": url,
+                    "shorturl": shorturl,
                 })
             });
 
