@@ -29,7 +29,6 @@ func FirebaseClient(c *auth.Client) {
 type Token struct {
 	IdToken string `json:"idToken"`
 }
-var frontendDomain = os.Getenv("FRONTEND_DOMAIN")
 
 
 func Verify(idToken string) (bool, string, int) {
@@ -93,7 +92,7 @@ func HandleLogin(c *gin.Context) {
 
 	cookie := http.Cookie{
 		Name:     "token",
-		Domain:   frontendDomain,
+		Domain:   "https://shrink.bhaskaraa45.me",
 		Path:     "/",
 		Secure:   true,
 		HttpOnly: true,
@@ -111,7 +110,7 @@ func HandleLogin(c *gin.Context) {
 func HandleLogout(c *gin.Context) {
 	cookie := http.Cookie{
 		Name:     "token",
-		Domain:   frontendDomain,
+		Domain:   "https://shrink.bhaskaraa45.me",
 		Path:     "/",
 		Secure:   true,
 		HttpOnly: true,

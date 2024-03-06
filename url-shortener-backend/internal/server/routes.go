@@ -20,14 +20,13 @@ type Token struct {
 }
 
 var userId = 0
-var frontendDomain = os.Getenv("FRONTEND_DOMAIN")
 
 func (s *Server) RegisterRoutes() http.Handler {
 	r := gin.Default()
 
 	// Add CORS middleware
 	r.Use(func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", frontendDomain)
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "https://shrink.bhaskaraa45.me")
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
@@ -84,7 +83,7 @@ func (s *Server) HelloWorldHandler(c *gin.Context) {
 	// resp := make(map[string]string)
 	// resp["message"] = "Hello World"
 	// c.JSON(http.StatusOK, resp)
-	c.Redirect(http.StatusMovedPermanently, frontendDomain)
+	c.Redirect(http.StatusMovedPermanently, "https://shrink.bhaskaraa45.me")
 }
 
 // func (s *Server) healthHandler(c *gin.Context) {
