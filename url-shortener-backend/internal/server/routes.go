@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"url-shortener-backend/internal"
 	"url-shortener-backend/internal/auth"
 	"url-shortener-backend/internal/guard"
@@ -70,6 +71,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.POST("/verify", auth.HandleLogin)
 	r.GET("/logout", auth.HandleLogout)
 	r.POST("/check", s.handleCheckAvailability)
+	r.DELETE("/delete/:id", s.handleDelete)
 	r.GET("/:shorturl", s.handleShortUrlClick)
 
 	return r
@@ -188,4 +190,36 @@ func (s *Server) handleCheckAvailability(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, internal.CustomResponse("it's avaliable", http.StatusOK))
+}
+
+func (s *Server) handleDelete(c *gin.Context) {
+	// var requestData model.DataModel
+	// err := json.NewDecoder(c.Request.Body).Decode(&requestData)
+	// if err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to parse JSON data"})
+	// 	return
+	// }
+	id_str := c.Param("id")
+	id, err := strconv.Atoi(id_str)
+	if id < 1 || err!=nil{
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid id"})
+		return
+	}
+
+	data, err := s.db.GetData(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal error"})
+		return
+	}
+	
+	if data.UserID != userId {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+	res := s.db.DeleteData(id)
+	if !res {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal error"})
+		return
+	}
+	c.JSON(http.StatusOK, internal.CustomResponse("Successfully deleted", http.StatusOK))
 }

@@ -21,7 +21,9 @@ type Service interface {
 	CreateUser(email string) (bool, int)
 	GetUser(userId int) (string, error)
 	UserExists(email string) (bool, int)
-	UrlAvaliable(shorturl string) (bool)
+	UrlAvaliable(shorturl string) bool
+	GetData(id int) (model.DataModel, error)
+	DeleteData(id int) bool
 }
 
 type service struct {
@@ -175,7 +177,7 @@ func (s *service) UserExists(email string) (bool, int) {
 	return false, 0
 }
 
-func (s *service) UrlAvaliable(shorturl string) (bool){
+func (s *service) UrlAvaliable(shorturl string) bool {
 	query := "SELECT EXISTS(SELECT 1 FROM urlshrink WHERE shorturl = $1)"
 	var exists bool
 
@@ -185,4 +187,27 @@ func (s *service) UrlAvaliable(shorturl string) (bool){
 		return true //if error then assume its not avlbl
 	}
 	return exists
+}
+
+func (s *service) GetData(id int) (model.DataModel, error) {
+	query := "SELECT * FROM urlshrink WHERE id = $1 "
+	var data model.DataModel
+	err := s.db.QueryRow(query, id).Scan(&data.Id, &data.Url, &data.ShortUrl, &data.Clicked, &data.UserID)
+
+	if err != nil {
+		log.Printf("error fetching data of id = %v, error: %v", id, err)
+		return data, err
+	}
+
+	return data, nil
+}
+
+func (s *service) DeleteData(id int) bool {
+	query := "DELETE FROM urlshrink WHERE id = $1"
+	_, err := s.db.Exec(query, id)
+	if err != nil {
+		log.Printf("error deleting data of id = %v, error: %v", id, err)
+		return false
+	}
+	return true
 }
