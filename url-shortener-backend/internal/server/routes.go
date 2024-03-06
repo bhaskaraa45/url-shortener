@@ -36,11 +36,11 @@ func (s *Server) RegisterRoutes() http.Handler {
 			return
 		}
 
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Token cookie not found"})
-			c.Abort()
-		return
-
 		//no guard waala routes
+		if c.FullPath() == "/verify" || c.FullPath() == "/:shorturl" || c.FullPath() == "/logout"{
+			c.Next()
+			return
+		}
 
 		cookie, err := c.Request.Cookie("token")
 		if err != nil || cookie == nil {
