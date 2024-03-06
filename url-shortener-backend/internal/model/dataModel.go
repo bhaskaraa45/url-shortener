@@ -6,3 +6,4 @@ type DataModel struct {
 	Clicked  int    `json:"clicked"`
 	UserID   int    `json:"user_id"`
 }
+

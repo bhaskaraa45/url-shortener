@@ -35,7 +35,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 			return
 		}
 
-		if c.FullPath() == "/verify" || c.FullPath() == "/:shorturl"{
+		if c.FullPath() == "/verify" || c.FullPath() == "/:shorturl" {
 			c.Next()
 			return
 		}
@@ -64,11 +64,13 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	r.GET("/", s.HelloWorldHandler)
 	r.GET("/health", s.healthHandler)
+
 	r.POST("/add", s.handlePostData)
-	r.GET("/:shorturl", s.handleShortUrlClick)
 	r.GET("/getAll", s.handleGetAll)
 	r.POST("/verify", auth.HandleLogin)
 	r.GET("/logout", auth.HandleLogout)
+	r.GET("/check", s.handleCheckAvailability)
+	r.GET("/:shorturl", s.handleShortUrlClick)
 
 	return r
 }
@@ -160,3 +162,30 @@ func (s *Server) handleGetAll(c *gin.Context) {
 // 	resp["email"] = email
 // 	c.JSON(http.StatusOK, resp)
 // }
+
+func (s *Server) handleCheckAvailability(c *gin.Context) {
+	var requestData model.DataModel
+	err := json.NewDecoder(c.Request.Body).Decode(&requestData)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to parse JSON data"})
+		return
+	}
+
+	shorturl := requestData.ShortUrl
+
+	fmt.Println(shorturl)
+
+	if len(shorturl) == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "No data found"})
+		return
+	}
+
+	exists := s.db.UrlAvaliable(shorturl)
+
+	if exists {
+		c.JSON(http.StatusConflict, internal.CustomResponse("already in use", http.StatusConflict))
+		return
+	}
+
+	c.JSON(http.StatusOK, internal.CustomResponse("it's avaliable", http.StatusOK))
+}

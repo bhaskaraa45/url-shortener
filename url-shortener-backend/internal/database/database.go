@@ -21,6 +21,7 @@ type Service interface {
 	CreateUser(email string) (bool, int)
 	GetUser(userId int) (string, error)
 	UserExists(email string) (bool, int)
+	UrlAvaliable(shorturl string) (bool)
 }
 
 type service struct {
@@ -173,4 +174,16 @@ func (s *service) UserExists(email string) (bool, int) {
 	}
 
 	return false, 0
+}
+
+func (s *service) UrlAvaliable(shorturl string) (bool){
+	query := "SELECT EXISTS(SELECT 1 FROM urlshrink WHERE shorturl = $1)"
+	var exists bool
+
+	err := s.db.QueryRow(query, shorturl).Scan(&exists)
+	if err != nil {
+		log.Printf("error checking url shorturl = %v, error: %v", shorturl, err)
+		return true //if error then assume its not avlbl
+	}
+	return exists
 }
