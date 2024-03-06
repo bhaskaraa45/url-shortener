@@ -36,10 +36,11 @@ func (s *Server) RegisterRoutes() http.Handler {
 			return
 		}
 
-		if c.FullPath() == "/verify" || c.FullPath() == "/:shorturl" {
-			c.Next()
-			return
-		}
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Token cookie not found"})
+			c.Abort()
+		return
+
+		//no guard waala routes
 
 		cookie, err := c.Request.Cookie("token")
 		if err != nil || cookie == nil {
@@ -111,14 +112,15 @@ func (s *Server) handlePostData(c *gin.Context) {
 		}
 	}
 
-	res := s.db.AddData(data.Url, shortUrl, 0, userId)
+	res, id := s.db.AddData(data.Url, shortUrl, 0, userId)
 
 	if res {
-		// resp := internal.CustomResponse("data successfully added!", http.StatusOK)
-		resp := make(map[string]string)
-		resp["shorturl"] = shortUrl
-		resp["url"] = data.Url
-		resp["clicked"] = "0"
+		var resp model.DataModel
+		resp.Id = id
+		resp.Clicked = 0
+		resp.Url = data.Url
+		resp.ShortUrl = shortUrl
+		resp.UserID = userId
 		c.JSON(http.StatusOK, resp)
 	} else {
 		resp := internal.CustomResponse("failed to add data!", http.StatusBadRequest)
@@ -201,24 +203,24 @@ func (s *Server) handleDelete(c *gin.Context) {
 	// }
 	id_str := c.Param("id")
 	id, err := strconv.Atoi(id_str)
-	if id < 1 || err!=nil{
+	if id < 1 || err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid id"})
 		return
 	}
 
 	data, err := s.db.GetData(id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal error"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "bad request"})
 		return
 	}
-	
+
 	if data.UserID != userId {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Unauthorized"})
 		return
 	}
 	res := s.db.DeleteData(id)
 	if !res {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal error"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal sever error"})
 		return
 	}
 	c.JSON(http.StatusOK, internal.CustomResponse("Successfully deleted", http.StatusOK))
