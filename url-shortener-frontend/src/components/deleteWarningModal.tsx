@@ -8,13 +8,11 @@ function ModalComponent({ deleteFunction , id}: {deleteFunction : Function, id:n
     };
 
     const handleYesClick = () => {
-        console.log("Yes, I'm sure");
         deleteFunction(id);
         setIsVisible(false);
     };
 
     const handleNoClick = () => {
-        console.log("No, cancel");
         setIsVisible(false);
     };
 

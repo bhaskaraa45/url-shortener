@@ -84,13 +84,13 @@
     align-self: center;
     display: flex;
     position: relative;
-    font-size: 18px;
+    font-size: 22px;
     font-weight: 500;
     align-items: center;
-    padding-left: 8px;
-    padding-right: 8px;
-    padding-top: 4px;
-    padding-bottom: 4px;
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 8px;
+    padding-bottom: 8px;
 }
 
 .google-icon{
@@ -140,4 +140,26 @@
 
 .disable{
     display: none;
+}
+
+
+@media screen and (max-width: 767px) {
+    .main{
+        width: 96vw;
+        height: 95vh;
+    }
+    .userName{
+        display: none;
+    }
+    .inputContainers{
+        display: block;
+        /* justify-content: space-between; */
+    }
+    .urlInput{
+        width: 100%;
+    }
+    .pathInput{
+        width: 100%;
+    }
+
 }

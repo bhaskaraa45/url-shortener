@@ -1,24 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import '../styles/styles.css'
-import { GoogleAuthProvider, signInWithPopup, getAuth, User } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup, getAuth } from "firebase/auth";
 import ApiServices from '../services/apiServices.ts';
 import { useNavigate } from 'react-router-dom';
 
 function LoginPage() {
-  const [user, setUser] = useState<User>();
 
   const navigate = useNavigate();
   useEffect(() => {
     const unsubscribe = getAuth().onAuthStateChanged(user => {
       if (user) {
-        setUser(user);
         navigate("/")
-      } else {
-        setUser(undefined);
       }
     });
     return () => unsubscribe();
-  }, []);
+  }, [navigate]);
 
   const handleSignIn = () => {
     const provider = new GoogleAuthProvider();
@@ -26,18 +22,19 @@ function LoginPage() {
     auth.languageCode = 'it';
     signInWithPopup(auth, provider)
       .then((result) => {
-        const credential = GoogleAuthProvider.credentialFromResult(result);
+        // const credential = GoogleAuthProvider.credentialFromResult(result);
         const user = result.user;
         user.getIdToken()
           .then((token) => {
             ApiServices.verifyUser(token)
               .then((resp) => {
-                if (resp == undefined) {
+                if (resp === undefined) {
                   return;
                 }
                 if (resp.status === 200) {
                   navigate("/")
                 } else {
+                  ApiServices.logout();
                 }
               })
               .catch((error) => {

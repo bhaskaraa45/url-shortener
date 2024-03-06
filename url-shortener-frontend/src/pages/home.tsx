@@ -24,7 +24,7 @@ function HomePage() {
     const myDomain:string = process.env.REACT_APP_BACKEND_DOMAIN;
 
     const [longUrl, setLongUrl] = useState("");
-    const [shortUrl, setShortUrl] = useState(myDomain);
+    const [shortUrl, setShortUrl] = useState(`https://${myDomain}/`);
     const [shortenedUrls, setShortenedUrls] = useState<DataModel[]>([]);
     const [user, setUser] = useState<User>();
     const [isLoggedIn, setLoginStatus] = useState<boolean>(false);
@@ -52,8 +52,6 @@ function HomePage() {
                         setShortenedUrls(response);
                     }
                 })
-                .catch(error => {
-                });
         }
         return () => unsubscribe();
     }, [isLoggedIn, navigate]);
@@ -97,7 +95,7 @@ function HomePage() {
     };
 
     const handleShortUrlChange = (url: string) => {
-        if (!url.startsWith(myDomain)) {
+        if (!url.startsWith(`https://${myDomain}/`)) {
             return;
         }
         if (url.length >= myDomain.length) {
@@ -118,7 +116,6 @@ function HomePage() {
             } else {
                 setAvaliability(false);
             }
-            console.log(isAvlbl)
         });
     };
 
