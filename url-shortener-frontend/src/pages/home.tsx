@@ -24,7 +24,7 @@ function HomePage() {
     const myDomain:string = process.env.REACT_APP_BACKEND_DOMAIN;
 
     const [longUrl, setLongUrl] = useState("");
-    const [shortUrl, setShortUrl] = useState(`https://${myDomain}/`);
+    const [shortUrl, setShortUrl] = useState(`${myDomain}/`);
     const [shortenedUrls, setShortenedUrls] = useState<DataModel[]>([]);
     const [user, setUser] = useState<User>();
     const [isLoggedIn, setLoginStatus] = useState<boolean>(false);
@@ -95,7 +95,7 @@ function HomePage() {
     };
 
     const handleShortUrlChange = (url: string) => {
-        if (!url.startsWith(`https://${myDomain}/`)) {
+        if (!url.startsWith(`${myDomain}/`)) {
             return;
         }
         if (url.length >= myDomain.length) {

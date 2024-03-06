@@ -18,7 +18,7 @@ class ApiServices {
 
     static async generateShortUrl(url: string, shorturl: string) {
         try {
-            const response = await fetch(`https://${ApiServices.endpoint}/add`, {
+            const response = await fetch(`${ApiServices.endpoint}/add`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -43,7 +43,7 @@ class ApiServices {
 
     static async getAllUrls() {
         try {
-            const response = await fetch(`https://${ApiServices.endpoint}/getAll`, {
+            const response = await fetch(`${ApiServices.endpoint}/getAll`, {
                 method: 'GET',
                 credentials: 'include',
                 headers: {
@@ -63,7 +63,7 @@ class ApiServices {
 
     static async getOgUrl(shorturl: string) {
         try {
-            const response = await fetch(`https://${ApiServices.endpoint}/${shorturl}`, {
+            const response = await fetch(`${ApiServices.endpoint}/${shorturl}`, {
                 method: 'GET',
                 credentials: 'include',
                 headers: {
@@ -80,7 +80,7 @@ class ApiServices {
 
     static async verifyUser(idToken: string) {
         try {
-            const response = await fetch(`https://${ApiServices.endpoint}/verify`, {
+            const response = await fetch(`${ApiServices.endpoint}/verify`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -99,7 +99,7 @@ class ApiServices {
 
     static async logout() {
         try {
-            const response = await fetch(`https://${ApiServices.endpoint}/logout`, {
+            const response = await fetch(`${ApiServices.endpoint}/logout`, {
                 method: 'GET',
                 credentials: 'include',
                 headers: {
@@ -115,7 +115,7 @@ class ApiServices {
 
     static async checkAvaliability(shorturl: string) {
         try {
-            const response = await fetch(`https://${ApiServices.endpoint}/check`, {
+            const response = await fetch(`${ApiServices.endpoint}/check`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -138,7 +138,7 @@ class ApiServices {
     }
     static async delete(id: number) {
         try {
-            const response = await fetch(`https://${ApiServices.endpoint}/delete/${id}`, {
+            const response = await fetch(`${ApiServices.endpoint}/delete/${id}`, {
                 method: 'DELETE',
                 credentials: 'include',
                 headers: {
