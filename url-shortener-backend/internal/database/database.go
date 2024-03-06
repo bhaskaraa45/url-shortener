@@ -113,8 +113,7 @@ func (s *service) GetAll(userId int) ([]model.DataModel, error) {
 	var alldata []model.DataModel
 	for rows.Next() {
 		var data model.DataModel
-		var id int
-		err := rows.Scan(&id, &data.Url, &data.ShortUrl, &data.Clicked, &data.UserID)
+		err := rows.Scan(&data.Id, &data.Url, &data.ShortUrl, &data.Clicked, &data.UserID)
 		if err != nil {
 			log.Printf("error scanning data row: %v", err)
 			return nil, err

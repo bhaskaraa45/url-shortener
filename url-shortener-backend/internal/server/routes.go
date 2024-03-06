@@ -69,7 +69,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.GET("/getAll", s.handleGetAll)
 	r.POST("/verify", auth.HandleLogin)
 	r.GET("/logout", auth.HandleLogout)
-	r.GET("/check", s.handleCheckAvailability)
+	r.POST("/check", s.handleCheckAvailability)
 	r.GET("/:shorturl", s.handleShortUrlClick)
 
 	return r
