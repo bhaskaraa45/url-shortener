@@ -7,7 +7,7 @@ function RedirectionPage() {
     const isFirstTimeRef = useRef(true);
     const [redirectUrl, setRedirectUrl] = useState<string>("");
 
-    const defaultUrl = "https://bhaskaraa45.me"
+    const defaultUrl = "https://shrink.bhaskaraa45.me"
 
     useEffect(() => {
         if (isFirstTimeRef.current) {

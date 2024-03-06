@@ -1,15 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import ApiServices from "../services/apiServices.ts";
 
 function SessionExpiredModal() {
-    const visibility = ApiServices.visibility
-    const [isVisible, setIsVisible] = useState(visibility);
+    const [isVisible, setIsVisible] = useState(false);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        setIsVisible(visibility);
-    }, [visibility]);
 
     const toggleModal = () => {
         setIsVisible(!isVisible);

@@ -18,18 +18,19 @@ const firebaseConfig = {
     measurementId: "G-QDQ1K5VZEH"
 };
 
-const app = initializeApp(firebaseConfig);
+initializeApp(firebaseConfig);
 
 function HomePage() {
+    const myDomain:string = process.env.REACT_APP_BACKEND_DOMAIN;
+
     const [longUrl, setLongUrl] = useState("");
-    const [shortUrl, setShortUrl] = useState("https://url.bhaskaraa45.me/");
+    const [shortUrl, setShortUrl] = useState(myDomain);
     const [shortenedUrls, setShortenedUrls] = useState<DataModel[]>([]);
     const [user, setUser] = useState<User>();
     const [isLoggedIn, setLoginStatus] = useState<boolean>(false);
     const [isAvlbl, setAvaliability] = useState<boolean>();
     const [isValidUrl, setValidity] = useState<boolean>();
 
-    const myDomain: string = "https://url.bhaskaraa45.me/";
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -55,7 +56,7 @@ function HomePage() {
                 });
         }
         return () => unsubscribe();
-    }, [isLoggedIn]);
+    }, [isLoggedIn, navigate]);
 
 
     const handleGenerateClick = () => {
@@ -82,7 +83,7 @@ function HomePage() {
         const parsedUrl = new URL(shortUrl)
         ApiServices.generateShortUrl(longUrl, parsedUrl.pathname.substring(1))
             .then(newShortUrl => {
-                if (shortenedUrls == undefined) {
+                if (shortenedUrls === undefined) {
                     setShortenedUrls([])
                 }
                 setShortenedUrls(prevShortenedUrls => [newShortUrl, ...prevShortenedUrls]);
@@ -108,7 +109,7 @@ function HomePage() {
         e.preventDefault();
         const parsedUrl = new URL(shortUrl);
         const path = parsedUrl.pathname.substring(1)
-        if (path.length == 0) {
+        if (path.length === 0) {
             return
         }
         ApiServices.checkAvaliability(path).then((res) => {
@@ -162,14 +163,14 @@ function HomePage() {
                     Enter a long URL
                     <br />
                     <input
-                        className={isValidUrl == undefined ? "urlInput border-2 rounded-md border-grey focus:border-indigo-500 text-base shadow-md" : isValidUrl ? "urlInput border-2 rounded-md border-grey focus:border-indigo-500 text-base shadow-md" : "urlInput border-2 rounded-md border-rose-500 focus:border-rose-500 text-base shadow-md"}
+                        className={isValidUrl === undefined ? "urlInput border-2 rounded-md border-grey focus:border-indigo-500 text-base shadow-md" : isValidUrl ? "urlInput border-2 rounded-md border-grey focus:border-indigo-500 text-base shadow-md" : "urlInput border-2 rounded-md border-rose-500 focus:border-rose-500 text-base shadow-md"}
                         autoComplete='off'
                         type='text'
                         placeholder="e.g. https://subdomain.long-domain.com/long-path"
                         value={longUrl}
                         onChange={(e) => setLongUrl(e.target.value)}
                     />
-                    <p className={isValidUrl == undefined ? "disable" : isValidUrl ? "disable text-rose-500" : "text-rose-500"}>
+                    <p className={isValidUrl === undefined ? "disable" : isValidUrl ? "disable text-rose-500" : "text-rose-500"}>
                         **Invalid URL
                     </p>
                 </label>
@@ -179,7 +180,7 @@ function HomePage() {
                     <br />
                     <form className="pathForm">
                         <input
-                            className={isAvlbl == undefined ? "pathInput border-2 rounded-md border-grey focus:border-indigo-500 text-base shadow-md" : isAvlbl ? "pathInput border-2 rounded-md border-grey focus:border-indigo-500 text-base shadow-md" : "pathInput border-2 rounded-md border-rose-500 focus:border-rose-500 text-base shadow-md"}
+                            className={isAvlbl === undefined ? "pathInput border-2 rounded-md border-grey focus:border-indigo-500 text-base shadow-md" : isAvlbl ? "pathInput border-2 rounded-md border-grey focus:border-indigo-500 text-base shadow-md" : "pathInput border-2 rounded-md border-rose-500 focus:border-rose-500 text-base shadow-md"}
                             autoComplete='off'
                             type='text'
                             placeholder="e.g. your-path"
@@ -190,10 +191,10 @@ function HomePage() {
                             check
                         </button>
                     </form>
-                    <p className={isAvlbl == undefined ? "disable" : isAvlbl ? "text-green-500" : "disable text-green-500"}>
+                    <p className={isAvlbl === undefined ? "disable" : isAvlbl ? "text-green-500" : "disable text-green-500"}>
                         **Available
                     </p>
-                    <p className={isAvlbl == undefined ? "disable" : isAvlbl ? "disable text-rose-500" : "text-rose-500"}>
+                    <p className={isAvlbl === undefined ? "disable" : isAvlbl ? "disable text-rose-500" : "text-rose-500"}>
                         **Not Available
                     </p>
                 </label>
@@ -210,7 +211,7 @@ function HomePage() {
                 Your shortened URLs
             </div>
 
-            <TableComponent dataList={shortenedUrls == undefined || shortenedUrls == null ? [] : shortenedUrls} deleteFunction={deleteFunction} />
+            <TableComponent dataList={shortenedUrls === undefined || shortenedUrls === null ? [] : shortenedUrls} deleteFunction={deleteFunction} />
         </div>
     );
 }

@@ -1,4 +1,4 @@
-import { getAuth, signOut, User } from "firebase/auth";
+import { getAuth, signOut } from "firebase/auth";
 
 class ApiServices {
     static endpoint: string = process.env.REACT_APP_BACKEND_DOMAIN;

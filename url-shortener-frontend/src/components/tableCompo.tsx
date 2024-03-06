@@ -1,10 +1,8 @@
 import React from "react";
 import DataModel from "../models/datamodel";
 import '../styles/styles.css'
-import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import ModalComponent from "./deleteWarningModal.tsx";
-import SessionExpiredModal from "./sessionExpireModal.tsx";
 
 function TableComponent({ dataList, deleteFunction }: { dataList: DataModel[] , deleteFunction: Function}) {
     const backendDomain = process.env.REACT_APP_BACKEND_DOMAIN
@@ -39,10 +37,10 @@ function TableComponent({ dataList, deleteFunction }: { dataList: DataModel[] , 
                         dataList.map((data, index) => (
                             <tr key={index} className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
                                 <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    <a href={"http://" + backendDomain + "/" + data.shorturl} target="_blank" className="font-medium  hover:underline"> {backendDomain}/{data.shorturl}</a>
+                                    <a href={"http://" + backendDomain + "/" + data.shorturl} target="noopener" className="font-medium  hover:underline"> {backendDomain}/{data.shorturl}</a>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <a href={data.url} target="_blank" className="font-medium hover:underline">{data.url}</a>
+                                    <a href={data.url} target="noopener" className="font-medium hover:underline">{data.url}</a>
                                 </td>
                                 <td className="px-6 py-4">
                                     {data.clicked}
@@ -55,8 +53,7 @@ function TableComponent({ dataList, deleteFunction }: { dataList: DataModel[] , 
                                     </button>} position="center center">
                                         <div className="popUpMain"> POPUP</div>
                                     </Popup> */}
-                                    {/* <ModalComponent deleteFunction={deleteFunction} id={data.id}/> */}
-                                    <SessionExpiredModal/>
+                                    <ModalComponent deleteFunction={deleteFunction} id={data.id}/>
 
                                 </td>
                             </tr>

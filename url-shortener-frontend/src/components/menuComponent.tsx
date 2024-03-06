@@ -74,7 +74,7 @@ export default function MenuListComposition({ imgUrl, userName }: { imgUrl: stri
                     aria-haspopup="true"
                     onClick={handleToggle}
                 >
-                    <img className="profilePic border-2 border-red-500" src={imgUrl}>
+                    <img alt='profile-pic' className="profilePic border-2 border-red-500" src={imgUrl}>
                     </img>
                     <div className='userName'>{userName}</div>
                 </Button>
