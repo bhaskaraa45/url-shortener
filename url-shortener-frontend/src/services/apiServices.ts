@@ -83,6 +83,22 @@ class ApiServices {
             console.error(error);
         }
     }
+
+    static async logout() {
+        try {
+            const response = await fetch(`http://${ApiServices.endpoint}/logout`, {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            });
+
+            return response.ok
+        } catch (error) {
+            console.error(error);
+        }
+    }
 }
 
 export default ApiServices;

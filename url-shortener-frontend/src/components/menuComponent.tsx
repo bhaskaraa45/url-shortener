@@ -9,10 +9,11 @@ import MenuList from '@mui/material/MenuList';
 import Stack from '@mui/material/Stack';
 import '../styles/styles.css'
 import { getAuth, signOut, User } from "firebase/auth";
+import ApiServices from '../services/apiServices.ts';
 
 
 
-export default function MenuListComposition({imgUrl, userName} : {imgUrl : string, userName: string} ) {
+export default function MenuListComposition({ imgUrl, userName }: { imgUrl: string, userName: string }) {
     const [open, setOpen] = React.useState(false);
     const anchorRef = React.useRef<HTMLButtonElement>(null);
 
@@ -33,7 +34,11 @@ export default function MenuListComposition({imgUrl, userName} : {imgUrl : strin
         const auth = getAuth();
         signOut(auth).then(() => {
             // Sign-out successful.
-            setOpen(false);
+            ApiServices.logout().then((res) => {
+                if (res) {
+                    setOpen(false);
+                }
+            })
         }).catch((error) => {
             // An error happened.
         });
