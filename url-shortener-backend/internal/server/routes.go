@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"os"
 	"strconv"
 	"url-shortener-backend/internal"
 	"url-shortener-backend/internal/auth"
@@ -38,7 +37,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 		}
 
 		//no guard waala routes
-		if c.FullPath() == "/" || c.FullPath() == "/verify" || c.FullPath() == "/:shorturl" || c.FullPath() == "/logout"{
+		if c.FullPath() == "/" || c.FullPath() == "/verify" || c.FullPath() == "/:shorturl" || c.FullPath() == "/logout" {
 			c.Next()
 			return
 		}
