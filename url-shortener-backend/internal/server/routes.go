@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 	"url-shortener-backend/internal"
 	"url-shortener-backend/internal/auth"
@@ -19,13 +20,14 @@ type Token struct {
 }
 
 var userId = 0
+var frontendDomain = os.Getenv("FRONTEND_DOMAIN")
 
 func (s *Server) RegisterRoutes() http.Handler {
 	r := gin.Default()
 
 	// Add CORS middleware
 	r.Use(func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+		c.Writer.Header().Set("Access-Control-Allow-Origin", frontendDomain)
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
@@ -37,7 +39,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 		}
 
 		//no guard waala routes
-		if c.FullPath() == "/verify" || c.FullPath() == "/:shorturl" || c.FullPath() == "/logout"{
+		if c.FullPath() == "/" || c.FullPath() == "/verify" || c.FullPath() == "/:shorturl" || c.FullPath() == "/logout"{
 			c.Next()
 			return
 		}
@@ -65,7 +67,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	})
 
 	r.GET("/", s.HelloWorldHandler)
-	r.GET("/health", s.healthHandler)
+	// r.GET("/health", s.healthHandler)
 
 	r.POST("/add", s.handlePostData)
 	r.GET("/getAll", s.handleGetAll)
@@ -79,14 +81,15 @@ func (s *Server) RegisterRoutes() http.Handler {
 }
 
 func (s *Server) HelloWorldHandler(c *gin.Context) {
-	resp := make(map[string]string)
-	resp["message"] = "Hello World"
-	c.JSON(http.StatusOK, resp)
+	// resp := make(map[string]string)
+	// resp["message"] = "Hello World"
+	// c.JSON(http.StatusOK, resp)
+	c.Redirect(http.StatusMovedPermanently, frontendDomain)
 }
 
-func (s *Server) healthHandler(c *gin.Context) {
-	c.JSON(http.StatusOK, s.db.Health())
-}
+// func (s *Server) healthHandler(c *gin.Context) {
+// 	c.JSON(http.StatusOK, s.db.Health())
+// }
 
 func (s *Server) handlePostData(c *gin.Context) {
 
@@ -195,12 +198,6 @@ func (s *Server) handleCheckAvailability(c *gin.Context) {
 }
 
 func (s *Server) handleDelete(c *gin.Context) {
-	// var requestData model.DataModel
-	// err := json.NewDecoder(c.Request.Body).Decode(&requestData)
-	// if err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to parse JSON data"})
-	// 	return
-	// }
 	id_str := c.Param("id")
 	id, err := strconv.Atoi(id_str)
 	if id < 1 || err != nil {

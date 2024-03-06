@@ -29,6 +29,8 @@ func FirebaseClient(c *auth.Client) {
 type Token struct {
 	IdToken string `json:"idToken"`
 }
+var frontendDomain = os.Getenv("FRONTEND_DOMAIN")
+
 
 func Verify(idToken string) (bool, string, int) {
 	ctx := context.Background()
@@ -79,7 +81,7 @@ func HandleLogin(c *gin.Context) {
 	jwtToken := jwt.New(jwt.SigningMethodHS256)
 	jwtToken.Claims = jwt.MapClaims{
 		"sub": userId,
-		"exp": time.Now().Add(3 * 24 * time.Hour).Unix(),
+		"exp": time.Now().Add(15 * 24 * time.Hour).Unix(),
 	}
 
 	tokenString, err := jwtToken.SignedString([]byte(os.Getenv("SECRET_KEY")))
@@ -91,11 +93,11 @@ func HandleLogin(c *gin.Context) {
 
 	cookie := http.Cookie{
 		Name:     "token",
-		Domain:   "localhost",
+		Domain:   frontendDomain,
 		Path:     "/",
 		Secure:   true,
 		HttpOnly: true,
-		Expires:  time.Now().Add(3 * 24 * time.Hour),
+		Expires:  time.Now().Add(15 * 24 * time.Hour),
 		Value:    tokenString,
 		SameSite: http.SameSiteNoneMode,
 	}
@@ -109,7 +111,7 @@ func HandleLogin(c *gin.Context) {
 func HandleLogout(c *gin.Context) {
 	cookie := http.Cookie{
 		Name:     "token",
-		Domain:   "localhost",
+		Domain:   frontendDomain,
 		Path:     "/",
 		Secure:   true,
 		HttpOnly: true,

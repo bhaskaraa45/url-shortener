@@ -36,6 +36,7 @@ var (
 	username = os.Getenv("DB_USERNAME")
 	port     = os.Getenv("DB_PORT")
 	host     = os.Getenv("DB_HOST")
+	frontendDomain = os.Getenv("FRONTEND_DOMAIN")
 )
 
 func New() Service {
@@ -82,7 +83,7 @@ func (s *service) GetOGUrl(shorturl string) string {
 	if err != nil {
 		log.Printf("failed to fetch og url of %v", shorturl)
 		log.Printf("error: %v", err)
-		return "https://shrink.bhaskaraa45.me"
+		return frontendDomain
 	}
 
 	s.UpdateClick(data.Clicked+1, shorturl)
