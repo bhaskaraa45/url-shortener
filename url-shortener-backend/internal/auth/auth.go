@@ -119,6 +119,5 @@ func HandleLogout(c *gin.Context) {
 		MaxAge:   -1,
 	}
 	http.SetCookie(c.Writer, &cookie)
-
 	c.JSON(http.StatusAccepted, internal.CustomResponse("successfully logged out!", http.StatusAccepted))
 }

@@ -15,7 +15,7 @@ import (
 
 type Service interface {
 	Health() map[string]string
-	AddData(url string, shorturl string, clicked int, userId int) bool
+	AddData(url string, shorturl string, clicked int, userId int) (bool, int)
 	GetOGUrl(shorturl string) string
 	GetAll(userId int) ([]model.DataModel, error)
 	CreateUser(email string) (bool, int)
@@ -62,14 +62,15 @@ func (s *service) Health() map[string]string {
 	}
 }
 
-func (s *service) AddData(url string, shorturl string, clicked int, userId int) bool {
-	que := "INSERT INTO urlshrink (url, shorturl, clicked, user_id) VALUES ($1, $2, $3, $4)"
-	_, err := s.db.Exec(que, url, shorturl, clicked, userId)
+func (s *service) AddData(url string, shorturl string, clicked int, userId int) (bool, int) {
+	que := "INSERT INTO urlshrink (url, shorturl, clicked, user_id) VALUES ($1, $2, $3, $4) RETURNING id"
+	var id int
+	err := s.db.QueryRow(que, url, shorturl, clicked, userId).Scan(&id)
 	if err != nil {
 		log.Printf("Failed to add data, err: %v", err)
-		return false
+		return false, 0
 	}
-	return true
+	return true,id
 }
 
 func (s *service) GetOGUrl(shorturl string) string {

@@ -9,10 +9,6 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-// func Guard(cookie) {
-
-// }
-
 func VerifyToken(cookieToken string) (bool, int) {
 	result, err := jwt.Parse(cookieToken, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
