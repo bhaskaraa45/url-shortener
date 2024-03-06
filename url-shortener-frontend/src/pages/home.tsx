@@ -87,7 +87,7 @@ function HomePage() {
                 setShortenedUrls(prevShortenedUrls => [newShortUrl, ...prevShortenedUrls]);
                 setLongUrl("");
                 setAvaliability(undefined)
-                setShortUrl(myDomain)
+                setShortUrl(`${myDomain}/`)
             })
             .catch(error => {
                 // Handle error
