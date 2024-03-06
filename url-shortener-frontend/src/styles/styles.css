@@ -137,3 +137,7 @@
 .listTitle{
     text-shadow: 2px 2px 6px black;
 }
+
+.disable{
+    display: none;
+}

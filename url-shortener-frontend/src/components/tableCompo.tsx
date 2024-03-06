@@ -18,6 +18,9 @@ function TableComponent({ dataList }: { dataList: DataModel[] }) {
                         <th scope="col" className="px-6 py-3">
                             Clicked
                         </th>
+                        <th scope="col" className="px-6 py-3">
+                            
+                        </th>
                     </tr>
                 </thead>
 
@@ -36,6 +39,9 @@ function TableComponent({ dataList }: { dataList: DataModel[] }) {
                                 </td>
                                 <td className="px-6 py-4">
                                     <a href={data.url} target="_blank" className="font-medium hover:underline">{data.url}</a>
+                                </td>
+                                <td className="px-6 py-4">
+                                    {data.clicked}
                                 </td>
                                 <td className="px-6 py-4">
                                     {data.clicked}

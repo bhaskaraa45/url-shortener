@@ -79,7 +79,7 @@ class ApiServices {
                 })
             });
             return response
-            
+
         } catch (error) {
             console.error(error);
         }
@@ -96,6 +96,33 @@ class ApiServices {
             });
 
             return response.ok
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    static async checkAvaliability(shorturl: string) {
+        try {
+            const response = await fetch(`http://${ApiServices.endpoint}/check`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "shorturl": shorturl
+                })
+            });
+
+            if(response.status == 401){
+                //handle logout
+            }
+            else if (response.status === 200) {
+                return true
+            }else{
+                return false;
+            }
+
         } catch (error) {
             console.error(error);
         }

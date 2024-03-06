@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import TableComponent from "../components/tableCompo.tsx";
 import DataModel from "../models/datamodel.ts"
 import ApiServices from "../services/apiServices.ts";
 import '../styles/styles.css'
 import { initializeApp } from "firebase/app";
 import { getAuth, User } from "firebase/auth";
-import { redirect } from "react-router-dom"; // Import Redirect from react-router-dom
 import MenuListComposition from "../components/menuComponent.tsx";
-import { useNavigate } from 'react-router-dom';
 
 const firebaseConfig = {
     apiKey: "AIzaSyBnCNk7cot7SKQH4KZLi0o3BQtl6JZir6U",
@@ -18,7 +17,8 @@ const firebaseConfig = {
     appId: "1:1058499734182:web:24c2bf304c5d9ef9222267",
     measurementId: "G-QDQ1K5VZEH"
 };
-const app = initializeApp(firebaseConfig)
+
+const app = initializeApp(firebaseConfig);
 
 function HomePage() {
     const [longUrl, setLongUrl] = useState("");
@@ -26,8 +26,10 @@ function HomePage() {
     const [shortenedUrls, setShortenedUrls] = useState<DataModel[]>([]);
     const [user, setUser] = useState<User>();
     const [isLoggedIn, setLoginStatus] = useState<boolean>(false);
-    const myDomain: string = "https://url.bhaskaraa45.me/"
+    const [isAvlbl, setAvaliability] = useState<boolean>();
+    const [isValidUrl, setValidity] = useState<boolean>();
 
+    const myDomain: string = "https://url.bhaskaraa45.me/";
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -50,7 +52,6 @@ function HomePage() {
                     }
                 })
                 .catch(error => {
-                    // console.error('Error fetching shortened URLs:', error);
                 });
         }
         return () => unsubscribe();
@@ -58,42 +59,76 @@ function HomePage() {
 
 
     const handleGenerateClick = () => {
+        const backend = new URL(myDomain)
+
+        if (!validateUrl(longUrl)) {
+            setValidity(false)
+            return
+        }
+        if (longUrl.length === 0) {
+            setValidity(false)
+            return
+        }
+        if (longUrl.includes(backend.hostname)) {
+            setValidity(false)
+            return
+        }
+
+        setValidity(true)
         const parsedUrl = new URL(shortUrl)
-        console.log(parsedUrl.pathname)
         ApiServices.generateShortUrl(longUrl, parsedUrl.pathname.substring(1))
             .then(newShortUrl => {
                 if (shortenedUrls == undefined) {
                     setShortenedUrls([])
                 }
                 setShortenedUrls(prevShortenedUrls => [newShortUrl, ...prevShortenedUrls]);
+                setLongUrl("");
             })
             .catch(error => {
                 // Handle error
             });
-        setLongUrl("");
     };
 
-    const handleShortUrlChnage = (url: string) => {
+    const handleShortUrlChange = (url: string) => {
         if (!url.startsWith(myDomain)) {
             return;
         }
         if (url.length >= myDomain.length) {
-            setShortUrl(url)
+            setShortUrl(url);
         }
     }
 
+    const handleCheckButton = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        const parsedUrl = new URL(shortUrl);
+        const path = parsedUrl.pathname.substring(1)
+        if (path.length == 0) {
+            return
+        }
+        ApiServices.checkAvaliability(path).then((res) => {
+            if (res) {
+                setAvaliability(true);
+            } else {
+                setAvaliability(false);
+            }
+            console.log(isAvlbl)
+        });
+    };
+
+    function validateUrl(urlString: string): boolean {
+        try {
+            new URL(urlString);
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }
 
     const defaultPic: string = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/512px-Windows_10_Default_Profile_Picture.svg.png?20221210150350"
-    var imgUrl: string = defaultPic
-
-    // if (user != undefined) {
-    //     imgUrl = user.photoURL ? user.photoURL : defaultPic
-    //     console.log(imgUrl)
-    // }
+    var imgUrl: string = defaultPic;
 
     return (
-        // <div className="main rounded-lg border-rose-500 shadow-lg">
-        <div className="main rounded-lg border-rose-500 ">
+        <div className="main rounded-lg border-rose-500">
             <div className="title text-3xl font-semibold text-white/[.85]">
                 Shrink your long URL
                 <MenuListComposition imgUrl={imgUrl} userName="bhaskar" />
@@ -103,36 +138,40 @@ function HomePage() {
                     Enter a long URL
                     <br />
                     <input
-                        className="urlInput border-2 rounded-md border-grey focus:border-indigo-500 text-base shadow-md"
+                        className={isValidUrl == undefined ? "urlInput border-2 rounded-md border-grey focus:border-indigo-500 text-base shadow-md" : isValidUrl ? "urlInput border-2 rounded-md border-grey focus:border-indigo-500 text-base shadow-md" : "urlInput border-2 rounded-md border-rose-500 focus:border-rose-500 text-base shadow-md"}
                         autoComplete='off'
                         type='text'
                         placeholder="e.g. https://subdomain.long-domain.com/long-path"
                         value={longUrl}
                         onChange={(e) => setLongUrl(e.target.value)}
                     />
+                    <p className={isValidUrl == undefined ? "disable" : isValidUrl ? "disable text-rose-500" : "text-rose-500"}>
+                        **Invalid URL
+                    </p>
                 </label>
-                <div className="gapInputs">
-
-                </div>
+                <div className="gapInputs"></div>
                 <label className="inputLabel text-lg font-normal text-white/[.85]">
                     Enter custom path (Optional)
                     <br />
                     <form className="pathForm">
                         <input
-                            className="pathInput border-2 rounded-md border-grey focus:border-indigo-500 text-base shadow-md"
+                            className={isAvlbl == undefined ? "pathInput border-2 rounded-md border-grey focus:border-indigo-500 text-base shadow-md" : isAvlbl ? "pathInput border-2 rounded-md border-grey focus:border-indigo-500 text-base shadow-md" : "pathInput border-2 rounded-md border-rose-500 focus:border-rose-500 text-base shadow-md"}
                             autoComplete='off'
                             type='text'
                             placeholder="e.g. your-path"
                             value={shortUrl}
-                            onChange={
-                                (e) => handleShortUrlChnage(e.target.value)
-                            }
+                            onChange={(e) => handleShortUrlChange(e.target.value)}
                         />
-                        <button onClick={()=> {console.log("helllo")}} className="checkButton">
+                        <button onClick={handleCheckButton} className="checkButton">
                             check
                         </button>
                     </form>
-
+                    <p className={isAvlbl == undefined ? "disable" : isAvlbl ? "text-green-500" : "disable text-green-500"}>
+                        **Available
+                    </p>
+                    <p className={isAvlbl == undefined ? "disable" : isAvlbl ? "disable text-rose-500" : "text-rose-500"}>
+                        **Not Available
+                    </p>
                 </label>
             </div>
             <button
@@ -148,7 +187,6 @@ function HomePage() {
             </div>
 
             <TableComponent dataList={shortenedUrls == undefined || shortenedUrls == null ? [] : shortenedUrls} />
-
         </div>
     );
 }
