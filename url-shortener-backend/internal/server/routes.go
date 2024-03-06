@@ -129,7 +129,7 @@ func (s *Server) handleShortUrlClick(c *gin.Context) {
 	resp := make(map[string]string)
 	resp["url"] = og
 	resp["shorturl"] = shorturl
-	c.Redirect(http.StatusSeeOther, og)
+	c.Redirect(http.StatusMovedPermanently, og)
 }
 
 func (s *Server) handleGetAll(c *gin.Context) {
