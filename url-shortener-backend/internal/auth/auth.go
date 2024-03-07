@@ -41,7 +41,9 @@ func Verify(idToken string) (bool, string, int) {
 
 	// Get user email from the verified token
 	userEmail := token.Claims["email"].(string)
+	userName := token.Claims["name"].(string)
 	fmt.Printf("User Email: %s\n", userEmail)
+	fmt.Printf("User Email: %s\n", userName)
 
 	isExists, id := database.New().UserExists(userEmail)
 
@@ -49,10 +51,9 @@ func Verify(idToken string) (bool, string, int) {
 		return true, userEmail, id
 	}
 
-	res, id_ := database.New().CreateUser(userEmail)
+	res, id_ := database.New().CreateUser(userEmail, userName)
 
 	return res, userEmail, id_
-
 }
 
 func HandleLogin(c *gin.Context) {

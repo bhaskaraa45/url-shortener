@@ -18,7 +18,7 @@ type Service interface {
 	AddData(url string, shorturl string, clicked int, userId int) (bool, int)
 	GetOGUrl(shorturl string) string
 	GetAll(userId int) ([]model.DataModel, error)
-	CreateUser(email string) (bool, int)
+	CreateUser(email string, name string) (bool, int)
 	GetUser(userId int) (string, error)
 	UserExists(email string) (bool, int)
 	UrlAvaliable(shorturl string) bool
@@ -132,10 +132,10 @@ func (s *service) GetAll(userId int) ([]model.DataModel, error) {
 	return alldata, nil
 }
 
-func (s *service) CreateUser(email string) (bool, int) {
-	que := "INSERT INTO users (email) VALUES ( $1 ) RETURNING id"
+func (s *service) CreateUser(email string, name string) (bool, int) {
+	que := "INSERT INTO users (email, name) VALUES ( $1, $2 ) RETURNING id"
 	var id int
-	err := s.db.QueryRow(que, email).Scan(&id)
+	err := s.db.QueryRow(que, email, name).Scan(&id)
 	if err != nil {
 		log.Printf("Failed to create user, err: %v", err)
 		return false, 0
@@ -146,7 +146,8 @@ func (s *service) CreateUser(email string) (bool, int) {
 func (s *service) GetUser(userId int) (string, error) {
 	que := "SELECT * FROM users WHERE id = $1 "
 	var email string
-	err := s.db.QueryRow(que, userId).Scan(&email)
+	var name string
+	err := s.db.QueryRow(que, userId).Scan(&email, &name)
 	if err != nil {
 		log.Printf("Failed to get user, err: %v", err)
 		return "", err
