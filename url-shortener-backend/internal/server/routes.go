@@ -20,11 +20,11 @@ type Token struct {
 
 var userId = 0
 
-func (s *Server) RegisterRoutes() http.Handler {
-	r := gin.Default()
+func (s *Server) RegisterRoutes() {
+	// r := gin.Default()
 
 	// Add CORS middleware
-	r.Use(func(c *gin.Context) {
+	s.Use(func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "https://shrink.bhaskaraa45.me")
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
@@ -64,18 +64,18 @@ func (s *Server) RegisterRoutes() http.Handler {
 		c.Next()
 	})
 
-	r.GET("/", s.HelloWorldHandler)
+	s.GET("/", s.HelloWorldHandler)
 	// r.GET("/health", s.healthHandler)
 
-	r.POST("/add", s.handlePostData)
-	r.GET("/getAll", s.handleGetAll)
-	r.POST("/verify", auth.HandleLogin)
-	r.GET("/logout", auth.HandleLogout)
-	r.POST("/check", s.handleCheckAvailability)
-	r.DELETE("/delete/:id", s.handleDelete)
-	r.GET("/:shorturl", s.handleShortUrlClick)
+	s.POST("/add", s.handlePostData)
+	s.GET("/getAll", s.handleGetAll)
+	s.POST("/verify", auth.HandleLogin)
+	s.GET("/logout", auth.HandleLogout)
+	s.POST("/check", s.handleCheckAvailability)
+	s.DELETE("/delete/:id", s.handleDelete)
+	s.GET("/:shorturl", s.handleShortUrlClick)
 
-	return r
+	// return r
 }
 
 func (s *Server) HelloWorldHandler(c *gin.Context) {
